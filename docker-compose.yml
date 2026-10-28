@@ -29,7 +29,8 @@ services:
     container_name: sf-redis
     command: ["redis-server", "--appendonly", "yes"]
     ports:
-      - "127.0.0.1:16379:6379"   # 6379 被 VMware vmnat 占用，改用 16379
+      - "127.0.0.1:16380:6379"   # 6379 被 VMware vmnat 占用；16379 留给智维的 mindops_redis，
+                                  # 两个项目抢同一端口会"谁先起谁赢"，后者静默连到对方的实例上
     volumes:
       - redis_data:/data
     healthcheck:

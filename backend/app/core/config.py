@@ -43,9 +43,10 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:3015,http://127.0.0.1:3015"
 
     # ----- C-26 跨进程状态（去重/防抖/合并窗口/心跳/限流/告警广播）-----
-    # 默认值与 docker-compose 的 sf-redis 对齐（宿主侧端口 16379，6379 被 vmnat 占用）。
+    # 默认值与 docker-compose 的 sf-redis 对齐（宿主端口 16380：6379 被 vmnat 占用，
+    # 16379 留给智维项目的 mindops_redis，避免两个项目抢同一端口）。
     # 留空或连不上 → 退回进程内存：单 worker 语义仍正确，多 worker 才会各算各的。
-    redis_url: str = "redis://127.0.0.1:16379/0"
+    redis_url: str = "redis://127.0.0.1:16380/0"
 
     # ----- 设备上行 MQTT 桥接（app/services/mqtt_bridge.py）-----
     # 开启后后端订阅 EMQX，把设备 data 帧转成 /device/ingest 的内部调用。

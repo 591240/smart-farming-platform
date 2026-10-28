@@ -341,7 +341,7 @@ check("休药期三要素齐全", bd["med_name"] and bd["withdrawal_until"] and 
 err = call_err("POST", f"/pen/{pen_f}/slaughter", {"male_count": 2, "female_count": 1, "force": True}, token)
 check("强制出栏缺备注 42201", err["code"] == 42201, err)
 # 强制整栏出栏（自动全部耳标离栏）
-d = call("POST", f"/pen/{pen_f}/slaughter", {"male_count": 2, "female_count": 1, "force": True, "force_note": "冒烟强制", "destination": "冒烟屠宰场"}, token)
+d = call("POST", f"/pen/{pen_f}/slaughter", {"male_count": 2, "female_count": 1, "force": True, "force_note": "冒烟场景强制出栏：休药期未满仍决定执行，责任由场方承担", "destination": "冒烟屠宰场"}, token)
 check("强制整栏出栏成功", d["withdrawal_check"] == "forced", d)
 d = call("GET", f"/pen/list?farm_id={farm_id}", token=token)
 pf = next(p for p in d["items"] if p["pen_id"] == pen_f)
