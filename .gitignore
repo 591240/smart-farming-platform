@@ -1,0 +1,24 @@
+# 敏感信息与环境变量（禁止提交）
+.env
+.env.*
+# 但模板必须入库：否则新环境拿不到键清单，只能靠猜——那正是默认密钥上线的路径
+!.env.example
+*.key
+
+# 依赖与构建产物
+node_modules/
+dist/
+__pycache__/
+*.pyc
+.venv/
+
+# 工作区本地数据
+.workbuddy/
+.loomy-attachments/
+*.log
+
+# 知识库上传文件（用户数据不入库 git，库里只存元数据）
+# 真实落盘路径是 backend/app/uploads/kb/（kb.py 的 UPLOAD_DIR = app/uploads/kb）。
+# 此前只写了 backend/uploads/，规则从未命中，210 个附件差点进了首次提交。
+backend/app/uploads/
+backend/uploads/

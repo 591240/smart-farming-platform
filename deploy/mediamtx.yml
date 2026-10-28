@@ -1,0 +1,13 @@
+# mediamtx 流媒体服务配置（开发环境）
+# 默认未推流时无任何路径活动属正常；摄像头接入后自动创建路径
+
+# RTSP 监听
+rtspAddress: :8554
+# HLS 监听
+hlsAddress: :8888
+# WebRTC 监听（ICE 服务 UDP 端口默认 8189，仅本机使用）
+webrtcAddress: :8889
+
+# 所有路径按需创建（摄像头推流/拉流即用）
+paths:
+  all_others:

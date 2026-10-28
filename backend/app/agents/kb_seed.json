@@ -1,0 +1,659 @@
+{
+  "version": 1,
+  "generated_at": "2026-10-14T14:25:56.326Z",
+  "entries": [
+    {
+      "species_code": "pig",
+      "disease_id": "pig-mhp",
+      "disease_name": "猪支原体肺炎（喘气病）",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "咳嗽",
+        "喘气",
+        "气喘",
+        "腹式呼吸",
+        "干咳",
+        "呛咳",
+        "不吃食",
+        "减食"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "延胡索酸泰妙菌素预混剂",
+        "盐酸多西环素可溶性粉"
+      ],
+      "feed_advice": "保持圈舍通风良好、降低氨气浓度，减少粉尘刺激；避免饲养密度过高。",
+      "source": "《猪病学》呼吸系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-app",
+      "disease_name": "猪传染性胸膜肺炎",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "呼吸困难",
+        "高热",
+        "发烧",
+        "犬坐",
+        "皮肤发紫",
+        "发绀",
+        "口鼻流血"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "氟苯尼考注射液",
+        "头孢噻呋钠注射液"
+      ],
+      "feed_advice": "发病期间减少应激，保证清洁饮水；改善通风并降低饲养密度。",
+      "source": "《猪病学》呼吸系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-flu",
+      "disease_name": "猪流行性感冒",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "突发高热",
+        "全群咳嗽",
+        "流鼻涕",
+        "流泪",
+        "精神沉郁",
+        "扎堆"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "阿莫西林可溶性粉"
+      ],
+      "feed_advice": "保温通风兼顾，供水充足；可在饮水中添加电解质多维缓解应激。",
+      "source": "《猪病学》呼吸系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-csf",
+      "disease_name": "猪瘟（古典猪瘟）",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "高热不退",
+        "皮肤出血点",
+        "出血斑",
+        "脓性眼屎",
+        "便秘腹泻交替",
+        "走路摇摆"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [],
+      "feed_advice": "无治疗价值，须立即隔离并报告当地动物疫病预防控制机构；禁止自行用药掩盖症状。",
+      "source": "农业农村部《猪瘟防治技术规范》（官方公开规范整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-scour",
+      "disease_name": "仔猪黄白痢（大肠杆菌病）",
+      "category": "digestive",
+      "symptom_keywords": [
+        "仔猪腹泻",
+        "黄痢",
+        "白痢",
+        "黄色稀粪",
+        "脱水",
+        "消瘦"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "头孢噻呋钠注射液",
+        "硫酸黏菌素预混剂"
+      ],
+      "feed_advice": "母猪乳汁质量是关键：加强母猪饲喂与乳头清洁；仔猪保温箱保持干燥。",
+      "source": "《猪病防治手册》消化道疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-ped",
+      "disease_name": "猪流行性腹泻/传染性胃肠炎",
+      "category": "digestive",
+      "symptom_keywords": [
+        "水样腹泻",
+        "喷射状腹泻",
+        "呕吐",
+        "全群腹泻",
+        "快速脱水"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [],
+      "feed_advice": "无特效抗病毒药：重点是补液防脱水（饮水添加口服补液盐）、保温；停料减料减轻肠道负担。",
+      "source": "《猪病学》消化系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-dysentery",
+      "disease_name": "猪痢疾（密螺旋体病）",
+      "category": "digestive",
+      "symptom_keywords": [
+        "血痢",
+        "便血",
+        "黏液血便",
+        "红色粪便",
+        "里急后重"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "乙酰甲喹注射液"
+      ],
+      "feed_advice": "粪污及时清理并消毒；治愈后坚持全进全出，防止带菌猪混群。",
+      "source": "《猪病防治手册》消化道疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-paratyphoid",
+      "disease_name": "仔猪副伤寒（沙门氏菌病）",
+      "category": "digestive",
+      "symptom_keywords": [
+        "腹泻",
+        "皮肤紫斑",
+        "败血症",
+        "持续下痢",
+        "耳根发紫"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "氟苯尼考注射液",
+        "磺胺间甲氧嘧啶钠注射液"
+      ],
+      "feed_advice": "断奶应激期注意饲料过渡；料槽清洁，防止霉变饲料。",
+      "source": "《猪病防治手册》消化道疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-ulcer",
+      "disease_name": "胃溃疡",
+      "category": "digestive",
+      "symptom_keywords": [
+        "呕吐",
+        "黑便",
+        "柏油样便",
+        "贫血",
+        "苍白",
+        "磨牙"
+      ],
+      "risk_level": "low",
+      "female_only": false,
+      "med_names": [],
+      "feed_advice": "检查饲料粒度过细问题，适当提高粗纤维；减少应激，保证饲料新鲜无霉变。",
+      "source": "《猪病学》消化系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-sow-paralysis",
+      "disease_name": "母猪产后瘫痪",
+      "category": "reproductive",
+      "symptom_keywords": [
+        "产后瘫痪",
+        "站不起来",
+        "后肢无力",
+        "四肢发软",
+        "产后站不起来"
+      ],
+      "risk_level": "mid",
+      "female_only": true,
+      "med_names": [
+        "葡萄糖酸钙注射液"
+      ],
+      "feed_advice": "妊娠后期与哺乳期日粮补钙补磷并调整钙磷比例；增加光照与适度运动。",
+      "source": "《猪病学》繁殖障碍与产科疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-mastitis",
+      "disease_name": "母猪乳房炎",
+      "category": "reproductive",
+      "symptom_keywords": [
+        "乳房红肿",
+        "乳房硬块",
+        "拒哺",
+        "乳汁带血",
+        "乳房发热"
+      ],
+      "risk_level": "mid",
+      "female_only": true,
+      "med_names": [
+        "阿莫西林可溶性粉",
+        "头孢噻呋钠注射液"
+      ],
+      "feed_advice": "哺乳期控制催料节奏防乳汁过浓；保持产床干燥清洁，必要时对仔猪实行寄养。",
+      "source": "《猪病防治手册》产科疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-abortion",
+      "disease_name": "母猪流产/繁殖障碍",
+      "category": "reproductive",
+      "symptom_keywords": [
+        "流产",
+        "死胎",
+        "早产",
+        "木乃伊胎",
+        "返情"
+      ],
+      "risk_level": "high",
+      "female_only": true,
+      "med_names": [],
+      "feed_advice": "立即隔离流产母猪并对流产胎儿做无害化处理；记录流产日龄供兽医排查病因（蓝耳/伪狂犬/细小等）。",
+      "source": "农业农村部相关疫病防治技术规范（官方公开规范整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-strep",
+      "disease_name": "猪链球菌病（脑膜炎型）",
+      "category": "neurological",
+      "symptom_keywords": [
+        "转圈",
+        "抽搐",
+        "尖叫",
+        "倒地划水",
+        "关节肿",
+        "跛行",
+        "高热"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "磺胺间甲氧嘧啶钠注射液",
+        "青霉素钾注射液"
+      ],
+      "feed_advice": "外伤是主要感染途径：剪牙断尾规范操作、地面防滑防尖锐物；病猪单独护理。",
+      "source": "《猪病学》神经系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-edema",
+      "disease_name": "仔猪水肿病",
+      "category": "neurological",
+      "symptom_keywords": [
+        "眼睑水肿",
+        "脸部肿胀",
+        "共济失调",
+        "走路摇晃",
+        "突然发病",
+        "断奶后发病"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "恩诺沙星注射液",
+        "磺胺间甲氧嘧啶钠注射液"
+      ],
+      "feed_advice": "断奶后避免突然换料与暴食，饲料过渡 5~7 天；降低日粮蛋白可减轻肠道负担。",
+      "source": "《猪病防治手册》仔猪疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-mange",
+      "disease_name": "猪疥螨病",
+      "category": "skin",
+      "symptom_keywords": [
+        "蹭痒",
+        "皮肤结痂",
+        "耳部擦伤",
+        "脱毛",
+        "皮肤增厚",
+        "蹭墙"
+      ],
+      "risk_level": "low",
+      "female_only": false,
+      "med_names": [
+        "伊维菌素注射液",
+        "阿苯达唑片"
+      ],
+      "feed_advice": "全群同步驱虫并结合环境杀虫（栏舍喷淋），间隔 7~10 天重复一次效果更佳。",
+      "source": "《猪病防治手册》寄生虫病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-erysipelas",
+      "disease_name": "猪丹毒",
+      "category": "skin",
+      "symptom_keywords": [
+        "菱形疹块",
+        "皮肤方块红斑",
+        "高热",
+        "疹块凸起"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "青霉素钾注射液"
+      ],
+      "feed_advice": "发病猪隔离治疗；高温高湿季节加强防蚊蝇与栏舍消毒。",
+      "source": "《猪病学》皮肤疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-eczema",
+      "disease_name": "湿疹/过敏性皮炎",
+      "category": "skin",
+      "symptom_keywords": [
+        "红疹",
+        "皮肤红斑",
+        "瘙痒",
+        "丘疹",
+        "无热"
+      ],
+      "risk_level": "low",
+      "female_only": false,
+      "med_names": [],
+      "feed_advice": "排查饲料霉变与垫料潮湿；保持皮肤清洁干燥，防蚊蝇叮咬。",
+      "source": "《猪病防治手册》普通病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "pig",
+      "disease_id": "pig-cold",
+      "disease_name": "普通感冒（风寒）",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "流清鼻涕",
+        "轻咳",
+        "精神一般",
+        "受凉",
+        "降温后发病",
+        "不吃食"
+      ],
+      "risk_level": "low",
+      "female_only": false,
+      "med_names": [
+        "阿莫西林可溶性粉"
+      ],
+      "feed_advice": "重点在防寒保温与防贼风；保证温水供应，减少冷应激。",
+      "source": "《猪病防治手册》普通病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "sheep",
+      "disease_id": "sheep-mhp",
+      "disease_name": "羊支原体肺炎",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "咳嗽",
+        "气喘",
+        "干咳",
+        "呛咳",
+        "呼吸急促",
+        "流鼻涕",
+        "不吃食",
+        "采食下降"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "延胡索酸泰妙菌素预混剂（羊）"
+      ],
+      "feed_advice": "圈舍保温与通风兼顾，降低氨气与粉尘刺激；发病群减少驱赶应激，保证清洁温水。",
+      "source": "《羊病学》呼吸系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "sheep",
+      "disease_id": "sheep-pasteurellosis",
+      "disease_name": "羊巴氏杆菌病",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "呼吸困难",
+        "咳嗽",
+        "流鼻涕",
+        "颈部水肿",
+        "咽喉肿胀"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "氟苯尼考注射液（羊）"
+      ],
+      "feed_advice": "发病羊立即隔离；气候骤变与运输应激期减少调动，圈舍通风保温兼顾。",
+      "source": "《羊病防治手册》呼吸系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "sheep",
+      "disease_id": "sheep-enterotoxemia",
+      "disease_name": "羊肠毒血症",
+      "category": "digestive",
+      "symptom_keywords": [
+        "突然死亡",
+        "抽搐",
+        "水样腹泻",
+        "痉挛",
+        "死前挣扎"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "磺胺间甲氧嘧啶钠注射液（羊）"
+      ],
+      "feed_advice": "立即停喂精料与青绿多汁饲料，转移至干燥处；全群按体质减料并紧急接种（遵兽医方案）。",
+      "source": "《羊病防治手册》消化道疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "sheep",
+      "disease_id": "sheep-braxy",
+      "disease_name": "羊快疫",
+      "category": "digestive",
+      "symptom_keywords": [
+        "突然死亡",
+        "腹胀",
+        "腹痛",
+        "口吐白沫",
+        "衰竭"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "青霉素钾注射液（羊）"
+      ],
+      "feed_advice": "发病急病程短，重点在疫苗预防与气候骤变时的圈舍保暖；病死羊无害化处理。",
+      "source": "《羊病防治手册》消化道疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "sheep",
+      "disease_id": "sheep-pox",
+      "disease_name": "羊痘",
+      "category": "skin",
+      "symptom_keywords": [
+        "痘疹",
+        "皮肤痘",
+        "结节",
+        "结痂",
+        "流鼻涕"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "青霉素钾注射液（羊）"
+      ],
+      "feed_advice": "隔离病羊防止接触传播；皮肤痘疹涂碘甘油防继发感染，圈舍彻底消毒。",
+      "source": "《羊病防治手册》皮肤疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "sheep",
+      "disease_id": "sheep-mange",
+      "disease_name": "羊痒螨病",
+      "category": "skin",
+      "symptom_keywords": [
+        "蹭痒",
+        "脱毛",
+        "皮肤结痂",
+        "蹭墙",
+        "皮肤增厚"
+      ],
+      "risk_level": "low",
+      "female_only": false,
+      "med_names": [
+        "伊维菌素注射液（羊）"
+      ],
+      "feed_advice": "全群同步药浴或注射驱虫并结合环境杀虫，间隔 7~10 天重复一次。",
+      "source": "《羊病防治手册》寄生虫病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "sheep",
+      "disease_id": "sheep-worm",
+      "disease_name": "羊胃肠道线虫病",
+      "category": "digestive",
+      "symptom_keywords": [
+        "消瘦",
+        "贫血",
+        "腹泻",
+        "不吃食",
+        "食欲差",
+        "颌下水肿",
+        "被毛粗乱"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "阿苯达唑片（羊）"
+      ],
+      "feed_advice": "放牧草场轮牧与驱虫计划结合；春秋两季定期驱虫，粪便堆肥发酵。",
+      "source": "《羊病防治手册》寄生虫病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "sheep",
+      "disease_id": "sheep-ecthyma",
+      "disease_name": "羊口疮（传染性脓疱）",
+      "category": "skin",
+      "symptom_keywords": [
+        "口疮",
+        "唇部水疱",
+        "口角结痂",
+        "采食困难",
+        "流涎"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "青霉素钾注射液（羊）"
+      ],
+      "feed_advice": "羔羊口腔破损是主要感染途径；给予柔软饲草，唇部痂皮清理后涂碘甘油。",
+      "source": "《羊病防治手册》皮肤疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "cattle",
+      "disease_id": "cattle-pasteurellosis",
+      "disease_name": "牛巴氏杆菌病（出血性败血症）",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "高热",
+        "呼吸困难",
+        "流鼻涕",
+        "颈部水肿",
+        "腹泻"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [
+        "头孢噻呋钠注射液（牛）"
+      ],
+      "feed_advice": "发病牛立即隔离；应激期（运输/气候骤变）减少调动，圈舍通风保温兼顾。",
+      "source": "《牛病防治手册》呼吸系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "cattle",
+      "disease_id": "cattle-fever",
+      "disease_name": "牛流行热",
+      "category": "respiratory",
+      "symptom_keywords": [
+        "突发高热",
+        "流泪",
+        "呼吸困难",
+        "跛行",
+        "流鼻涕"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "恩诺沙星注射液（牛）"
+      ],
+      "feed_advice": "蚊蝇季节加强防蚊措施；发病期保证饮水与电解质补充，轻症数日可自愈。",
+      "source": "《牛病学》病毒性疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "cattle",
+      "disease_id": "cattle-atony",
+      "disease_name": "牛前胃弛缓",
+      "category": "digestive",
+      "symptom_keywords": [
+        "反刍减少",
+        "食欲差",
+        "不吃食",
+        "消瘦",
+        "磨牙",
+        "左肷蠕动弱"
+      ],
+      "risk_level": "low",
+      "female_only": false,
+      "med_names": [],
+      "feed_advice": "排查饲料突变与霉变；给予优质干草促进反刍，适当牵引运动按摩瘤胃。",
+      "source": "《牛病防治手册》消化系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "cattle",
+      "disease_id": "cattle-bloat",
+      "disease_name": "牛瘤胃臌气",
+      "category": "digestive",
+      "symptom_keywords": [
+        "腹部膨大",
+        "左肷膨隆",
+        "呼吸困难",
+        "停止采食",
+        "不安"
+      ],
+      "risk_level": "high",
+      "female_only": false,
+      "med_names": [],
+      "feed_advice": "急性臌气属急症须立即处理（套管针穿刺由兽医操作）；避免大量采食幼嫩豆科牧草。",
+      "source": "《牛病防治手册》消化系统疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "cattle",
+      "disease_id": "cattle-mastitis",
+      "disease_name": "牛乳腺炎",
+      "category": "reproductive",
+      "symptom_keywords": [
+        "乳房红肿",
+        "乳汁异常",
+        "奶量下降",
+        "乳房发热",
+        "拒哺"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "头孢噻呋钠注射液（牛）"
+      ],
+      "feed_advice": "挤奶前后药浴乳头、挤奶设备定期校准；干奶期注入干奶药（遵兽医方案）。",
+      "source": "《牛病防治手册》产科疾病章节（公开出版物合规整理）"
+    },
+    {
+      "species_code": "cattle",
+      "disease_id": "cattle-liverfluke",
+      "disease_name": "牛肝片吸虫病",
+      "category": "digestive",
+      "symptom_keywords": [
+        "消瘦",
+        "贫血",
+        "颌下水肿",
+        "间歇性腹泻",
+        "被毛粗乱"
+      ],
+      "risk_level": "mid",
+      "female_only": false,
+      "med_names": [
+        "阿苯达唑片（牛）"
+      ],
+      "feed_advice": "潮湿草场是感染源：排水与轮牧结合，秋冬定期驱虫。",
+      "source": "《牛病防治手册》寄生虫病章节（公开出版物合规整理）"
+    }
+  ]
+}

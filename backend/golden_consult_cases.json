@@ -1,0 +1,1498 @@
+{
+ "version": 1,
+ "generated_from": "app/agents/kb_seed.json",
+ "note": "期望值由知识库自身字段机械推导；expected_any 为集合，命中任一即算召回",
+ "counts": {
+  "positive": 64,
+  "negative": 30,
+  "total": 94
+ },
+ "cases": [
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": true,
+   "message": "猪产后瘫痪、站不起来、后肢无力，精神不太好",
+   "used_keywords": [
+    "产后瘫痪",
+    "站不起来",
+    "后肢无力"
+   ],
+   "expected_any": [
+    "pig-sow-paralysis"
+   ],
+   "expected_names": [
+    "母猪产后瘫痪"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "母猪产后瘫痪"
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是耳朵一直在抖",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪高热不退、皮肤出血点、出血斑，精神不太好",
+   "used_keywords": [
+    "高热不退",
+    "皮肤出血点",
+    "出血斑"
+   ],
+   "expected_any": [
+    "pig-csf"
+   ],
+   "expected_names": [
+    "猪瘟（古典猪瘟）"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪瘟（古典猪瘟）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛突发高热、流泪、呼吸困难，精神不太好",
+   "used_keywords": [
+    "突发高热",
+    "流泪",
+    "呼吸困难"
+   ],
+   "expected_any": [
+    "cattle-fever"
+   ],
+   "expected_names": [
+    "牛流行热"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "牛流行热"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛食欲差、不吃食、消瘦，精神不太好",
+   "used_keywords": [
+    "食欲差",
+    "不吃食",
+    "消瘦"
+   ],
+   "expected_any": [
+    "cattle-atony"
+   ],
+   "expected_names": [
+    "牛前胃弛缓"
+   ],
+   "expected_risk": "low",
+   "source_disease": "牛前胃弛缓"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊咳嗽、气喘、干咳，精神不太好",
+   "used_keywords": [
+    "咳嗽",
+    "气喘",
+    "干咳"
+   ],
+   "expected_any": [
+    "sheep-mhp"
+   ],
+   "expected_names": [
+    "羊支原体肺炎"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "羊支原体肺炎"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊咳嗽、流鼻涕、颈部水肿，精神不太好",
+   "used_keywords": [
+    "咳嗽",
+    "流鼻涕",
+    "颈部水肿"
+   ],
+   "expected_any": [
+    "sheep-pasteurellosis"
+   ],
+   "expected_names": [
+    "羊巴氏杆菌病"
+   ],
+   "expected_risk": "high",
+   "source_disease": "羊巴氏杆菌病"
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是睡觉时后腿蹬到了栏位",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": true,
+   "message": "猪乳房硬块、拒哺、乳汁带血，精神不太好",
+   "used_keywords": [
+    "乳房硬块",
+    "拒哺",
+    "乳汁带血"
+   ],
+   "expected_any": [
+    "pig-mastitis"
+   ],
+   "expected_names": [
+    "母猪乳房炎"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "母猪乳房炎"
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是在圈里转了三圈就趴下了",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪红疹、皮肤红斑、瘙痒，精神不太好",
+   "used_keywords": [
+    "红疹",
+    "皮肤红斑",
+    "瘙痒"
+   ],
+   "expected_any": [
+    "pig-eczema"
+   ],
+   "expected_names": [
+    "湿疹/过敏性皮炎"
+   ],
+   "expected_risk": "low",
+   "source_disease": "湿疹/过敏性皮炎"
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是对着料槽叫了两声",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊腹胀、腹痛、口吐白沫，精神不太好",
+   "used_keywords": [
+    "腹胀",
+    "腹痛",
+    "口吐白沫"
+   ],
+   "expected_any": [
+    "sheep-braxy"
+   ],
+   "expected_names": [
+    "羊快疫"
+   ],
+   "expected_risk": "high",
+   "source_disease": "羊快疫"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊消瘦、贫血、腹泻，精神不太好",
+   "used_keywords": [
+    "消瘦",
+    "贫血",
+    "腹泻"
+   ],
+   "expected_any": [
+    "sheep-worm"
+   ],
+   "expected_names": [
+    "羊胃肠道线虫病"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "羊胃肠道线虫病"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": true,
+   "message": "猪站不起来、后肢无力、四肢发软，精神不太好",
+   "used_keywords": [
+    "站不起来",
+    "后肢无力",
+    "四肢发软"
+   ],
+   "expected_any": [
+    "pig-sow-paralysis"
+   ],
+   "expected_names": [
+    "母猪产后瘫痪"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "母猪产后瘫痪"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": true,
+   "message": "猪乳房红肿、乳房硬块、拒哺，精神不太好",
+   "used_keywords": [
+    "乳房红肿",
+    "乳房硬块",
+    "拒哺"
+   ],
+   "expected_any": [
+    "pig-mastitis"
+   ],
+   "expected_names": [
+    "母猪乳房炎"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "母猪乳房炎"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪腹泻、皮肤紫斑、败血症，精神不太好",
+   "used_keywords": [
+    "腹泻",
+    "皮肤紫斑",
+    "败血症"
+   ],
+   "expected_any": [
+    "pig-paratyphoid"
+   ],
+   "expected_names": [
+    "仔猪副伤寒（沙门氏菌病）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "仔猪副伤寒（沙门氏菌病）"
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是在圈里转了三圈就趴下了",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是尾巴一直摇摆不停",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪皮肤红斑、瘙痒、丘疹，精神不太好",
+   "used_keywords": [
+    "皮肤红斑",
+    "瘙痒",
+    "丘疹"
+   ],
+   "expected_any": [
+    "pig-eczema"
+   ],
+   "expected_names": [
+    "湿疹/过敏性皮炎"
+   ],
+   "expected_risk": "low",
+   "source_disease": "湿疹/过敏性皮炎"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪呕吐、黑便、柏油样便，精神不太好",
+   "used_keywords": [
+    "呕吐",
+    "黑便",
+    "柏油样便"
+   ],
+   "expected_any": [
+    "pig-ulcer"
+   ],
+   "expected_names": [
+    "胃溃疡"
+   ],
+   "expected_risk": "low",
+   "source_disease": "胃溃疡"
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是尾巴一直摇摆不停",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛乳汁异常、奶量下降、乳房发热，精神不太好",
+   "used_keywords": [
+    "乳汁异常",
+    "奶量下降",
+    "乳房发热"
+   ],
+   "expected_any": [
+    "cattle-mastitis"
+   ],
+   "expected_names": [
+    "牛乳腺炎"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "牛乳腺炎"
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是今天喂料时它看了我一眼",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪黄痢、白痢、黄色稀粪，精神不太好",
+   "used_keywords": [
+    "黄痢",
+    "白痢",
+    "黄色稀粪"
+   ],
+   "expected_any": [
+    "pig-scour"
+   ],
+   "expected_names": [
+    "仔猪黄白痢（大肠杆菌病）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "仔猪黄白痢（大肠杆菌病）"
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是趴着的时候头朝着北边",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是睡觉时后腿蹬到了栏位",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪眼睑水肿、脸部肿胀、共济失调，精神不太好",
+   "used_keywords": [
+    "眼睑水肿",
+    "脸部肿胀",
+    "共济失调"
+   ],
+   "expected_any": [
+    "pig-edema"
+   ],
+   "expected_names": [
+    "仔猪水肿病"
+   ],
+   "expected_risk": "high",
+   "source_disease": "仔猪水肿病"
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是鼻镜上停了一只蚊子",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是走路时尾巴竖得笔直",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊呼吸困难、咳嗽、流鼻涕，精神不太好",
+   "used_keywords": [
+    "呼吸困难",
+    "咳嗽",
+    "流鼻涕"
+   ],
+   "expected_any": [
+    "sheep-pasteurellosis"
+   ],
+   "expected_names": [
+    "羊巴氏杆菌病"
+   ],
+   "expected_risk": "high",
+   "source_disease": "羊巴氏杆菌病"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪皮肤紫斑、败血症、持续下痢，精神不太好",
+   "used_keywords": [
+    "皮肤紫斑",
+    "败血症",
+    "持续下痢"
+   ],
+   "expected_any": [
+    "pig-paratyphoid"
+   ],
+   "expected_names": [
+    "仔猪副伤寒（沙门氏菌病）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "仔猪副伤寒（沙门氏菌病）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪黑便、柏油样便、贫血，精神不太好",
+   "used_keywords": [
+    "黑便",
+    "柏油样便",
+    "贫血"
+   ],
+   "expected_any": [
+    "pig-ulcer"
+   ],
+   "expected_names": [
+    "胃溃疡"
+   ],
+   "expected_risk": "low",
+   "source_disease": "胃溃疡"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪喷射状腹泻、呕吐、全群腹泻，精神不太好",
+   "used_keywords": [
+    "喷射状腹泻",
+    "呕吐",
+    "全群腹泻"
+   ],
+   "expected_any": [
+    "pig-ped"
+   ],
+   "expected_names": [
+    "猪流行性腹泻/传染性胃肠炎"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪流行性腹泻/传染性胃肠炎"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛流泪、呼吸困难、跛行，精神不太好",
+   "used_keywords": [
+    "流泪",
+    "呼吸困难",
+    "跛行"
+   ],
+   "expected_any": [
+    "cattle-fever"
+   ],
+   "expected_names": [
+    "牛流行热"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "牛流行热"
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是吃的时候把料槽顶歪了",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是耳朵一直在抖",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪便血、黏液血便、红色粪便，精神不太好",
+   "used_keywords": [
+    "便血",
+    "黏液血便",
+    "红色粪便"
+   ],
+   "expected_any": [
+    "pig-dysentery"
+   ],
+   "expected_names": [
+    "猪痢疾（密螺旋体病）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "猪痢疾（密螺旋体病）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪轻咳、精神一般、受凉，精神不太好",
+   "used_keywords": [
+    "轻咳",
+    "精神一般",
+    "受凉"
+   ],
+   "expected_any": [
+    "pig-cold"
+   ],
+   "expected_names": [
+    "普通感冒（风寒）"
+   ],
+   "expected_risk": "low",
+   "source_disease": "普通感冒（风寒）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊气喘、干咳、呛咳，精神不太好",
+   "used_keywords": [
+    "气喘",
+    "干咳",
+    "呛咳"
+   ],
+   "expected_any": [
+    "sheep-mhp"
+   ],
+   "expected_names": [
+    "羊支原体肺炎"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "羊支原体肺炎"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪呼吸困难、高热、发烧，精神不太好",
+   "used_keywords": [
+    "呼吸困难",
+    "高热",
+    "发烧"
+   ],
+   "expected_any": [
+    "pig-app"
+   ],
+   "expected_names": [
+    "猪传染性胸膜肺炎"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪传染性胸膜肺炎"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊皮肤痘、结节、结痂，精神不太好",
+   "used_keywords": [
+    "皮肤痘",
+    "结节",
+    "结痂"
+   ],
+   "expected_any": [
+    "sheep-pox"
+   ],
+   "expected_names": [
+    "羊痘"
+   ],
+   "expected_risk": "high",
+   "source_disease": "羊痘"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪血痢、便血、黏液血便，精神不太好",
+   "used_keywords": [
+    "血痢",
+    "便血",
+    "黏液血便"
+   ],
+   "expected_any": [
+    "pig-dysentery"
+   ],
+   "expected_names": [
+    "猪痢疾（密螺旋体病）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "猪痢疾（密螺旋体病）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪突发高热、全群咳嗽、流鼻涕，精神不太好",
+   "used_keywords": [
+    "突发高热",
+    "全群咳嗽",
+    "流鼻涕"
+   ],
+   "expected_any": [
+    "pig-flu"
+   ],
+   "expected_names": [
+    "猪流行性感冒"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "猪流行性感冒"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛高热、呼吸困难、流鼻涕，精神不太好",
+   "used_keywords": [
+    "高热",
+    "呼吸困难",
+    "流鼻涕"
+   ],
+   "expected_any": [
+    "cattle-pasteurellosis"
+   ],
+   "expected_names": [
+    "牛巴氏杆菌病（出血性败血症）"
+   ],
+   "expected_risk": "high",
+   "source_disease": "牛巴氏杆菌病（出血性败血症）"
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是今天喂料时它看了我一眼",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪皮肤方块红斑、高热、疹块凸起，精神不太好",
+   "used_keywords": [
+    "皮肤方块红斑",
+    "高热",
+    "疹块凸起"
+   ],
+   "expected_any": [
+    "pig-erysipelas"
+   ],
+   "expected_names": [
+    "猪丹毒"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪丹毒"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛贫血、颌下水肿、间歇性腹泻，精神不太好",
+   "used_keywords": [
+    "贫血",
+    "颌下水肿",
+    "间歇性腹泻"
+   ],
+   "expected_any": [
+    "cattle-liverfluke"
+   ],
+   "expected_names": [
+    "牛肝片吸虫病"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "牛肝片吸虫病"
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是耳朵一直在抖",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是鼻镜上停了一只蚊子",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是吃的时候把料槽顶歪了",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是走路时尾巴竖得笔直",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪水样腹泻、喷射状腹泻、呕吐，精神不太好",
+   "used_keywords": [
+    "水样腹泻",
+    "喷射状腹泻",
+    "呕吐"
+   ],
+   "expected_any": [
+    "pig-ped"
+   ],
+   "expected_names": [
+    "猪流行性腹泻/传染性胃肠炎"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪流行性腹泻/传染性胃肠炎"
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是趴着的时候头朝着北边",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪蹭痒、皮肤结痂、耳部擦伤，精神不太好",
+   "used_keywords": [
+    "蹭痒",
+    "皮肤结痂",
+    "耳部擦伤"
+   ],
+   "expected_any": [
+    "pig-mange"
+   ],
+   "expected_names": [
+    "猪疥螨病"
+   ],
+   "expected_risk": "low",
+   "source_disease": "猪疥螨病"
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是尾巴一直摇摆不停",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪咳嗽、喘气、气喘，精神不太好",
+   "used_keywords": [
+    "咳嗽",
+    "喘气",
+    "气喘"
+   ],
+   "expected_any": [
+    "pig-mhp"
+   ],
+   "expected_names": [
+    "猪支原体肺炎（喘气病）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "猪支原体肺炎（喘气病）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊抽搐、水样腹泻、痉挛，精神不太好",
+   "used_keywords": [
+    "抽搐",
+    "水样腹泻",
+    "痉挛"
+   ],
+   "expected_any": [
+    "sheep-enterotoxemia"
+   ],
+   "expected_names": [
+    "羊肠毒血症"
+   ],
+   "expected_risk": "high",
+   "source_disease": "羊肠毒血症"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊脱毛、皮肤结痂、蹭墙，精神不太好",
+   "used_keywords": [
+    "脱毛",
+    "皮肤结痂",
+    "蹭墙"
+   ],
+   "expected_any": [
+    "sheep-mange"
+   ],
+   "expected_names": [
+    "羊痒螨病"
+   ],
+   "expected_risk": "low",
+   "source_disease": "羊痒螨病"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊贫血、腹泻、不吃食，精神不太好",
+   "used_keywords": [
+    "贫血",
+    "腹泻",
+    "不吃食"
+   ],
+   "expected_any": [
+    "sheep-worm"
+   ],
+   "expected_names": [
+    "羊胃肠道线虫病"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "羊胃肠道线虫病"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊口疮、唇部水疱、口角结痂，精神不太好",
+   "used_keywords": [
+    "口疮",
+    "唇部水疱",
+    "口角结痂"
+   ],
+   "expected_any": [
+    "sheep-ecthyma"
+   ],
+   "expected_names": [
+    "羊口疮（传染性脓疱）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "羊口疮（传染性脓疱）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊突然死亡、腹胀、腹痛，精神不太好",
+   "used_keywords": [
+    "突然死亡",
+    "腹胀",
+    "腹痛"
+   ],
+   "expected_any": [
+    "sheep-braxy"
+   ],
+   "expected_names": [
+    "羊快疫"
+   ],
+   "expected_risk": "high",
+   "source_disease": "羊快疫"
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是走路时尾巴竖得笔直",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是睡觉时后腿蹬到了栏位",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是鼻镜上停了一只蚊子",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": true,
+   "message": "猪流产、死胎、早产，精神不太好",
+   "used_keywords": [
+    "流产",
+    "死胎",
+    "早产"
+   ],
+   "expected_any": [
+    "pig-abortion"
+   ],
+   "expected_names": [
+    "母猪流产/繁殖障碍"
+   ],
+   "expected_risk": "high",
+   "source_disease": "母猪流产/繁殖障碍"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛左肷膨隆、呼吸困难、停止采食，精神不太好",
+   "used_keywords": [
+    "左肷膨隆",
+    "呼吸困难",
+    "停止采食"
+   ],
+   "expected_any": [
+    "cattle-bloat"
+   ],
+   "expected_names": [
+    "牛瘤胃臌气"
+   ],
+   "expected_risk": "high",
+   "source_disease": "牛瘤胃臌气"
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是趴着的时候头朝着北边",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪菱形疹块、皮肤方块红斑、高热，精神不太好",
+   "used_keywords": [
+    "菱形疹块",
+    "皮肤方块红斑",
+    "高热"
+   ],
+   "expected_any": [
+    "pig-erysipelas"
+   ],
+   "expected_names": [
+    "猪丹毒"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪丹毒"
+  },
+  {
+   "kind": "negative",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪生病了，症状是对着料槽叫了两声",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪仔猪腹泻、黄痢、白痢，精神不太好",
+   "used_keywords": [
+    "仔猪腹泻",
+    "黄痢",
+    "白痢"
+   ],
+   "expected_any": [
+    "pig-scour"
+   ],
+   "expected_names": [
+    "仔猪黄白痢（大肠杆菌病）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "仔猪黄白痢（大肠杆菌病）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪流清鼻涕、轻咳、精神一般，精神不太好",
+   "used_keywords": [
+    "流清鼻涕",
+    "轻咳",
+    "精神一般"
+   ],
+   "expected_any": [
+    "pig-cold"
+   ],
+   "expected_names": [
+    "普通感冒（风寒）"
+   ],
+   "expected_risk": "low",
+   "source_disease": "普通感冒（风寒）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛反刍减少、食欲差、不吃食，精神不太好",
+   "used_keywords": [
+    "反刍减少",
+    "食欲差",
+    "不吃食"
+   ],
+   "expected_any": [
+    "cattle-atony"
+   ],
+   "expected_names": [
+    "牛前胃弛缓"
+   ],
+   "expected_risk": "low",
+   "source_disease": "牛前胃弛缓"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": true,
+   "message": "猪死胎、早产、木乃伊胎，精神不太好",
+   "used_keywords": [
+    "死胎",
+    "早产",
+    "木乃伊胎"
+   ],
+   "expected_any": [
+    "pig-abortion"
+   ],
+   "expected_names": [
+    "母猪流产/繁殖障碍"
+   ],
+   "expected_risk": "high",
+   "source_disease": "母猪流产/繁殖障碍"
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是对着料槽叫了两声",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "negative",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛生病了，症状是今天喂料时它看了我一眼",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪皮肤出血点、出血斑、脓性眼屎，精神不太好",
+   "used_keywords": [
+    "皮肤出血点",
+    "出血斑",
+    "脓性眼屎"
+   ],
+   "expected_any": [
+    "pig-csf"
+   ],
+   "expected_names": [
+    "猪瘟（古典猪瘟）"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪瘟（古典猪瘟）"
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是在圈里转了三圈就趴下了",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪皮肤结痂、耳部擦伤、脱毛，精神不太好",
+   "used_keywords": [
+    "皮肤结痂",
+    "耳部擦伤",
+    "脱毛"
+   ],
+   "expected_any": [
+    "pig-mange"
+   ],
+   "expected_names": [
+    "猪疥螨病"
+   ],
+   "expected_risk": "low",
+   "source_disease": "猪疥螨病"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛消瘦、贫血、颌下水肿，精神不太好",
+   "used_keywords": [
+    "消瘦",
+    "贫血",
+    "颌下水肿"
+   ],
+   "expected_any": [
+    "cattle-liverfluke"
+   ],
+   "expected_names": [
+    "牛肝片吸虫病"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "牛肝片吸虫病"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛乳房红肿、乳汁异常、奶量下降，精神不太好",
+   "used_keywords": [
+    "乳房红肿",
+    "乳汁异常",
+    "奶量下降"
+   ],
+   "expected_any": [
+    "cattle-mastitis"
+   ],
+   "expected_names": [
+    "牛乳腺炎"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "牛乳腺炎"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛呼吸困难、流鼻涕、颈部水肿，精神不太好",
+   "used_keywords": [
+    "呼吸困难",
+    "流鼻涕",
+    "颈部水肿"
+   ],
+   "expected_any": [
+    "cattle-pasteurellosis"
+   ],
+   "expected_names": [
+    "牛巴氏杆菌病（出血性败血症）"
+   ],
+   "expected_risk": "high",
+   "source_disease": "牛巴氏杆菌病（出血性败血症）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊突然死亡、抽搐、水样腹泻，精神不太好",
+   "used_keywords": [
+    "突然死亡",
+    "抽搐",
+    "水样腹泻"
+   ],
+   "expected_any": [
+    "sheep-enterotoxemia"
+   ],
+   "expected_names": [
+    "羊肠毒血症"
+   ],
+   "expected_risk": "high",
+   "source_disease": "羊肠毒血症"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊痘疹、皮肤痘、结节，精神不太好",
+   "used_keywords": [
+    "痘疹",
+    "皮肤痘",
+    "结节"
+   ],
+   "expected_any": [
+    "sheep-pox"
+   ],
+   "expected_names": [
+    "羊痘"
+   ],
+   "expected_risk": "high",
+   "source_disease": "羊痘"
+  },
+  {
+   "kind": "negative",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊生病了，症状是吃的时候把料槽顶歪了",
+   "expected_any": [],
+   "expected_risk": null,
+   "source_disease": null
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪转圈、抽搐、尖叫，精神不太好",
+   "used_keywords": [
+    "转圈",
+    "抽搐",
+    "尖叫"
+   ],
+   "expected_any": [
+    "pig-strep"
+   ],
+   "expected_names": [
+    "猪链球菌病（脑膜炎型）"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪链球菌病（脑膜炎型）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "cattle",
+   "has_female": false,
+   "message": "牛腹部膨大、左肷膨隆、呼吸困难，精神不太好",
+   "used_keywords": [
+    "腹部膨大",
+    "左肷膨隆",
+    "呼吸困难"
+   ],
+   "expected_any": [
+    "cattle-bloat"
+   ],
+   "expected_names": [
+    "牛瘤胃臌气"
+   ],
+   "expected_risk": "high",
+   "source_disease": "牛瘤胃臌气"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪高热、发烧、犬坐，精神不太好",
+   "used_keywords": [
+    "高热",
+    "发烧",
+    "犬坐"
+   ],
+   "expected_any": [
+    "pig-app"
+   ],
+   "expected_names": [
+    "猪传染性胸膜肺炎"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪传染性胸膜肺炎"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪全群咳嗽、流鼻涕、流泪，精神不太好",
+   "used_keywords": [
+    "全群咳嗽",
+    "流鼻涕",
+    "流泪"
+   ],
+   "expected_any": [
+    "pig-flu"
+   ],
+   "expected_names": [
+    "猪流行性感冒"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "猪流行性感冒"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪喘气、气喘、腹式呼吸，精神不太好",
+   "used_keywords": [
+    "喘气",
+    "气喘",
+    "腹式呼吸"
+   ],
+   "expected_any": [
+    "pig-mhp"
+   ],
+   "expected_names": [
+    "猪支原体肺炎（喘气病）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "猪支原体肺炎（喘气病）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊唇部水疱、口角结痂、采食困难，精神不太好",
+   "used_keywords": [
+    "唇部水疱",
+    "口角结痂",
+    "采食困难"
+   ],
+   "expected_any": [
+    "sheep-ecthyma"
+   ],
+   "expected_names": [
+    "羊口疮（传染性脓疱）"
+   ],
+   "expected_risk": "mid",
+   "source_disease": "羊口疮（传染性脓疱）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "sheep",
+   "has_female": false,
+   "message": "羊蹭痒、脱毛、皮肤结痂，精神不太好",
+   "used_keywords": [
+    "蹭痒",
+    "脱毛",
+    "皮肤结痂"
+   ],
+   "expected_any": [
+    "sheep-mange"
+   ],
+   "expected_names": [
+    "羊痒螨病"
+   ],
+   "expected_risk": "low",
+   "source_disease": "羊痒螨病"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪抽搐、尖叫、倒地划水，精神不太好",
+   "used_keywords": [
+    "抽搐",
+    "尖叫",
+    "倒地划水"
+   ],
+   "expected_any": [
+    "pig-strep"
+   ],
+   "expected_names": [
+    "猪链球菌病（脑膜炎型）"
+   ],
+   "expected_risk": "high",
+   "source_disease": "猪链球菌病（脑膜炎型）"
+  },
+  {
+   "kind": "positive",
+   "species_code": "pig",
+   "has_female": false,
+   "message": "猪脸部肿胀、共济失调、走路摇晃，精神不太好",
+   "used_keywords": [
+    "脸部肿胀",
+    "共济失调",
+    "走路摇晃"
+   ],
+   "expected_any": [
+    "pig-edema"
+   ],
+   "expected_names": [
+    "仔猪水肿病"
+   ],
+   "expected_risk": "high",
+   "source_disease": "仔猪水肿病"
+  }
+ ]
+}

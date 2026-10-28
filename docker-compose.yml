@@ -1,0 +1,130 @@
+# 智慧养殖多智能体平台 — 开发环境基础设施
+# 用法：docker compose up -d
+# 服务：PostgreSQL / Redis / EMQX(MQTT) / Milvus(+etcd+minio) / mediamtx(流媒体)
+# 全部端口仅绑定 127.0.0.1，避免暴露到局域网
+
+name: smart-farm
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: sf-postgres
+    environment:
+      POSTGRES_USER: smartfarm
+      POSTGRES_PASSWORD: smartfarm123
+      POSTGRES_DB: smart_farm
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartfarm -d smart_farm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:8.10.2   # 复用本地已有镜像
+    container_name: sf-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:16379:6379"   # 6379 被 VMware vmnat 占用，改用 16379
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  emqx:
+    image: emqx/emqx:5.8
+    container_name: sf-emqx
+    ports:
+      - "127.0.0.1:1883:1883"    # MQTT
+      - "127.0.0.1:18083:18083"  # Dashboard (默认 admin/public)
+    volumes:
+      - emqx_data:/opt/emqx/data
+    healthcheck:
+      test: ["CMD", "emqx", "ctl", "status"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ---------- Milvus standalone（etcd + minio + milvus） ----------
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.14
+    container_name: sf-etcd
+    environment:
+      ETCD_AUTO_COMPACTION_MODE: revision
+      ETCD_AUTO_COMPACTION_RETENTION: "1000"
+      ETCD_QUOTA_BACKEND_BYTES: "4294967296"
+    command: etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    volumes:
+      - etcd_data:/etcd
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z   # 复用本地已有镜像
+    container_name: sf-minio
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    command: minio server /minio_data
+    ports:
+      - "127.0.0.1:9001:9001"   # MinIO 控制台
+    volumes:
+      - minio_data:/minio_data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  milvus:
+    image: milvusdb/milvus:v3.0.0   # 复用本地已有镜像
+    container_name: sf-milvus
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    ports:
+      - "127.0.0.1:19530:19530"  # SDK 连接端口
+      - "127.0.0.1:9091:9091"    # 健康检查 /metrics
+    volumes:
+      - milvus_data:/var/lib/milvus
+    depends_on:
+      - etcd
+      - minio
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  # ---------- 流媒体（RTSP → HLS/WebRTC） ----------
+  mediamtx:
+    image: bluenviron/mediamtx:1.11.3
+    container_name: sf-mediamtx
+    ports:
+      - "127.0.0.1:8554:8554"    # RTSP
+      - "127.0.0.1:8888:8888"    # HLS
+      - "127.0.0.1:8889:8889"    # WebRTC
+      - "127.0.0.1:8189:8189/udp"  # WebRTC ICE（C-01：缺这条时 WHEP 信令成功但 ICE 连不通，只能退回 HLS）
+    volumes:
+      - ./deploy/mediamtx.yml:/mediamtx.yml:ro
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  redis_data:
+  emqx_data:
+  etcd_data:
+  minio_data:
+  milvus_data:

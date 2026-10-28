@@ -1,0 +1,54 @@
+# 云上牧场后端 — systemd 服务单元
+# 放到 /etc/systemd/system/smart-farming-api.service
+# 然后：systemctl daemon-reload && systemctl enable --now smart-farming-api
+#
+# 为什么裸跑 uvicorn 而不是再套一个容器：4G 机器上 PG/Redis 已经在容器里，后端进容器
+# 要多一层网络与内存开销，而它需要的只是"能连上 127.0.0.1 的 PG 和 Redis"。
+#
+# 关键：**不要在这里加多 worker**。单进程 + 下面的 Restart=always 已够用；真要横向扩，
+# 先 `curl -s 127.0.0.1:8000/api/health` 确认 state_backend=redis，否则去重/防抖/合并窗口/
+# 限流会按进程分裂——那正是 docs/08 C-26 记的原始症状（A 进程超标 2 次、B 进程 1 次，
+# 永远凑不满 3 次，于是不再有任何告警）。
+#
+# 目录约定（config.py 的 .env 路径按 `backend/app/core/config.py` 向上三级算项目根）：
+#   /srv/smart-farming/            ← 项目根，.env 在这里
+#   /srv/smart-farming/backend/    ← WorkingDirectory，run.py 在这里
+#   /srv/smart-farming/.venv/      ← 依赖装在这里
+
+[Unit]
+Description=Smart Farming API (FastAPI + LangGraph)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=smartfarm
+Group=smartfarm
+WorkingDirectory=/srv/smart-farming/backend
+
+# 只监听回环：公网入口只有 nginx，这既是安全边界也是 X-Forwarded-For 可信的前提
+Environment=AI_HOST=127.0.0.1
+# 其余配置（JWT_SECRET / DATABASE_URL / REDIS_URL / LLM_API_KEY …）由应用自己从这个
+# 目录的 .env 读取。刻意不用 EnvironmentFile：unit 的解析规则与 dotenv 不同，
+# 带引号或特殊字符的值会静默错位，排查起来比缺键更难。
+
+ExecStart=/srv/smart-farming/.venv/bin/python run.py
+
+Restart=always
+RestartSec=3
+# 优雅退出：lifespan 收尾要关 checkpoint 连接池、Redis 订阅泵与 MQTT 桥接
+TimeoutStopSec=20
+KillSignal=SIGINT
+
+StandardOutput=append:/var/log/smart-farming/api.log
+StandardError=append:/var/log/smart-farming/api-error.log
+
+# 最小权限：后端只需要写自己的上传目录和日志
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/srv/smart-farming/backend/uploads /var/log/smart-farming
+
+[Install]
+WantedBy=multi-user.target

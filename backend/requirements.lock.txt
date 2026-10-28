@@ -1,0 +1,29 @@
+# 当前验证环境的直接依赖快照（2026-10-28 生成，pip freeze 的项目相关子集）。
+# 用途：服务器上 `pip install -r requirements.lock.txt` 复现这套跑过 6 组冒烟的版本，
+#       而不是让 pip 去抓两天后的新版（langgraph/mcp/pymilvus 生态变动快）。
+# 注意：传递依赖未钉版本；要完全复现请在部署用的干净 venv 里重新 pip freeze 一次。
+# 依赖意图与注释仍看 requirements.txt。
+#
+# ⚠ 生成时有两个包在运行环境里并未安装，因此没有钉版：
+#   paho-mqtt —— MQTT 桥接（services/mqtt_bridge.py 是延迟 import，缺包只告警不崩，
+#                但 MQTT_ENABLED=true 也接不上 EMQX）
+#   mcp       —— 气象 MCP Server/Client（app/mcp_weather/ 起不来；weather_answer 节点
+#                会按 client.py 的降级纪律回退直调高德，功能不报错但那条链路实际没跑）
+# 上线前若要这两条能力，先 pip install 再重新生成本文件。
+fastapi==0.141.1
+uvicorn==0.52.4
+httpx==0.28.1
+pydantic==2.12.4
+pydantic-settings==2.12.0
+sqlalchemy==2.1.1
+asyncpg==0.32.0
+pyjwt==2.13.0
+bcrypt==4.3.0
+langgraph==1.2.11
+langgraph-checkpoint-postgres==3.1.2
+psycopg==3.3.6
+scipy==1.18.1
+redis==8.1.0
+pymilvus==3.0.2
+python-multipart==0.0.32
+websockets==16.1.1

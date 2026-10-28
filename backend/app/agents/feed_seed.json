@@ -1,0 +1,1717 @@
+{
+  "version": 1,
+  "price_calibration": "2026-10-14",
+  "generated_at": "2026-10-15T01:57:36.417Z",
+  "nutrition_lib": [
+    {
+      "species_code": "pig",
+      "variety_code": "pig_fattening",
+      "stage": "weaning",
+      "sex_type": "all",
+      "min_weight": 20,
+      "max_weight": 35,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.4,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "16~18%",
+            "min": 16,
+            "max": 18,
+            "unit": "%"
+          },
+          {
+            "name": "赖氨酸",
+            "required": "≥1.00%",
+            "min": 1,
+            "max": null,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥13.5 MJ/kg",
+            "min": 13.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 65
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 6
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 24
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": {
+        "high_temp": {
+          "temp_gt": 32,
+          "reduce_concentrate_pct": 10
+        }
+      },
+      "source": "NY/T 65《猪饲养标准》(2004) 保育期段 · 《湖南省生猪健康养殖技术规程》（估算整理）"
+    },
+    {
+      "species_code": "pig",
+      "variety_code": "pig_fattening",
+      "stage": "fattening",
+      "sex_type": "all",
+      "min_weight": 35,
+      "max_weight": 110,
+      "nutrition": {
+        "daily_feed_kg_per_head": 2,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "13~15%",
+            "min": 13,
+            "max": 15,
+            "unit": "%"
+          },
+          {
+            "name": "赖氨酸",
+            "required": "≥0.70%",
+            "min": 0.7,
+            "max": null,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥13.0 MJ/kg",
+            "min": 13,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.9%",
+            "min": 0.5,
+            "max": 0.9,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 65
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 12
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 18
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": {
+        "high_temp": {
+          "temp_gt": 32,
+          "reduce_concentrate_pct": 10
+        }
+      },
+      "source": "NY/T 65《猪饲养标准》(2004) 育肥期段（35~110kg） · 《湖南省生猪健康养殖技术规程》（估算整理）"
+    },
+    {
+      "species_code": "pig",
+      "variety_code": "pig_sow",
+      "stage": null,
+      "sex_type": "female",
+      "sow_phase": "gestation",
+      "min_weight": 120,
+      "max_weight": 250,
+      "nutrition": {
+        "daily_feed_kg_per_head": 2.2,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "12~14%",
+            "min": 12,
+            "max": 14,
+            "unit": "%"
+          },
+          {
+            "name": "赖氨酸",
+            "required": "≥0.55%",
+            "min": 0.55,
+            "max": null,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥12.5 MJ/kg",
+            "min": 12.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.6~0.9%",
+            "min": 0.6,
+            "max": 0.9,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 60
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 22
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 13
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": {
+        "high_temp": {
+          "temp_gt": 30,
+          "reduce_concentrate_pct": 8
+        }
+      },
+      "source": "NY/T 65《猪饲养标准》(2004) 妊娠母猪段（妊娠单档；前期/后期为应用层推导值，F07 实装）· 估算整理"
+    },
+    {
+      "species_code": "pig",
+      "variety_code": "pig_sow",
+      "stage": null,
+      "sex_type": "female",
+      "sow_phase": "lactation",
+      "min_weight": 140,
+      "max_weight": 260,
+      "nutrition": {
+        "daily_feed_kg_per_head": 5,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "16~18%",
+            "min": 16,
+            "max": 18,
+            "unit": "%"
+          },
+          {
+            "name": "赖氨酸",
+            "required": "≥0.90%",
+            "min": 0.9,
+            "max": null,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥13.5 MJ/kg",
+            "min": 13.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.6~1.0%",
+            "min": 0.6,
+            "max": 1,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 65
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 6
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 24
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": {
+        "high_temp": {
+          "temp_gt": 30,
+          "reduce_concentrate_pct": 8
+        }
+      },
+      "source": "NY/T 65《猪饲养标准》(2004) 哺乳母猪段 · 估算整理"
+    },
+    {
+      "species_code": "pig",
+      "variety_code": "pig_piglet",
+      "stage": "weaning",
+      "sex_type": "all",
+      "min_weight": 15,
+      "max_weight": 25,
+      "nutrition": {
+        "daily_feed_kg_per_head": 0.9,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "18~20%",
+            "min": 18,
+            "max": 20,
+            "unit": "%"
+          },
+          {
+            "name": "赖氨酸",
+            "required": "≥1.15%",
+            "min": 1.15,
+            "max": null,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥13.5 MJ/kg",
+            "min": 13.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 60
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 4
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 31
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 65《猪饲养标准》(2004) 仔猪保育段（15~25kg） · 估算整理"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_hu",
+      "stage": "weaning",
+      "sex_type": "all",
+      "min_weight": 15,
+      "max_weight": 30,
+      "nutrition": {
+        "daily_feed_kg_per_head": 0.9,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "16~18%",
+            "min": 16,
+            "max": 18,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.0 MJ/kg",
+            "min": 10,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 45
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 24
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 8
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 20
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 816-2021《肉羊饲养标准》羔羊段（CP 16~18%、DE 9.5~10.5）· 舍饲肉羊技术规程羔羊期配方（估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_hu",
+      "stage": "growing",
+      "sex_type": "all",
+      "min_weight": 30,
+      "max_weight": 45,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.4,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "14~16%",
+            "min": 14,
+            "max": 16,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥9.5 MJ/kg",
+            "min": 9.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 50
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 18
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 10
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 19
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 816-2021《肉羊饲养标准》育成羊段（CP 14~16%、DE 9.0~10.0）· 舍饲肉羊技术规程（估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_hu",
+      "stage": "fattening",
+      "sex_type": "all",
+      "min_weight": 25,
+      "max_weight": 55,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.6,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "12~14%",
+            "min": 12,
+            "max": 14,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.0 MJ/kg",
+            "min": 10,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.4~0.8%",
+            "min": 0.4,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 58
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 13
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 14
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 12
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 816-2021《肉羊饲养标准》育肥羊段（CP 12~14%、DE 10.0~10.8）· 内蒙古农牧厅育肥配方（估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_hu",
+      "stage": "gestation",
+      "sex_type": "female",
+      "min_weight": 40,
+      "max_weight": 75,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.8,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "13~15%",
+            "min": 13,
+            "max": 15,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.0 MJ/kg",
+            "min": 10,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.7~1.0%",
+            "min": 0.7,
+            "max": 1,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 47
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 16
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 12
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 20
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": null,
+      "source": "《羊的饲养标准》怀孕母羊段（后期 50kg：风干料 2.0kg、DCP 90~120g/d）· 滩羊/舍饲规程妊娠后期精料 0.5~0.7kg/d（估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_hu",
+      "stage": "lactation",
+      "sex_type": "female",
+      "min_weight": 40,
+      "max_weight": 75,
+      "nutrition": {
+        "daily_feed_kg_per_head": 2.4,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "14~16%",
+            "min": 14,
+            "max": 16,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.5 MJ/kg",
+            "min": 10.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.7~1.0%",
+            "min": 0.7,
+            "max": 1,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 50
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 20
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 10
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 15
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": null,
+      "source": "《羊的饲养标准》哺乳母羊段（单羔 50kg：风干料 2.2kg、DCP 110~190g/d；双羔 3.0kg）· 澳洲白绵羊规程哺乳期（估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_hu",
+      "stage": null,
+      "sex_type": "female",
+      "min_weight": 40,
+      "max_weight": 70,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.8,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "11~13%",
+            "min": 11,
+            "max": 13,
+            "unit": "%"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 50
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 14
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 16
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 17
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "《羊的饲养标准》空怀母羊段（空怀期兜底；妊娠/泌乳请在圈舍设置对应阶段）（估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_small_tailed_han",
+      "stage": "weaning",
+      "sex_type": "all",
+      "min_weight": 15,
+      "max_weight": 30,
+      "nutrition": {
+        "daily_feed_kg_per_head": 0.95,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "16~18%",
+            "min": 16,
+            "max": 18,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.0 MJ/kg",
+            "min": 10,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 45
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 24
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 8
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 20
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 816-2021《肉羊饲养标准》羔羊段（多胎品种采食量略高，估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_small_tailed_han",
+      "stage": "growing",
+      "sex_type": "all",
+      "min_weight": 30,
+      "max_weight": 45,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.5,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "14~16%",
+            "min": 14,
+            "max": 16,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥9.5 MJ/kg",
+            "min": 9.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 50
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 18
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 10
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 19
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 816-2021《肉羊饲养标准》育成羊段（多胎品种采食量略高，估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_small_tailed_han",
+      "stage": "fattening",
+      "sex_type": "all",
+      "min_weight": 25,
+      "max_weight": 55,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.7,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "12~14%",
+            "min": 12,
+            "max": 14,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.0 MJ/kg",
+            "min": 10,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.4~0.8%",
+            "min": 0.4,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 58
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 13
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 14
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 12
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 816-2021《肉羊饲养标准》育肥羊段（CP 12~14%、DE 10.0~10.8；估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_small_tailed_han",
+      "stage": "gestation",
+      "sex_type": "female",
+      "min_weight": 40,
+      "max_weight": 80,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.9,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "13~15%",
+            "min": 13,
+            "max": 15,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.0 MJ/kg",
+            "min": 10,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.7~1.0%",
+            "min": 0.7,
+            "max": 1,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 47
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 16
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 12
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 20
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": null,
+      "source": "《羊的饲养标准》怀孕母羊段（多胎品种双羔率高，妊娠后期需求更高，估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_small_tailed_han",
+      "stage": "lactation",
+      "sex_type": "female",
+      "min_weight": 40,
+      "max_weight": 80,
+      "nutrition": {
+        "daily_feed_kg_per_head": 2.6,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "14~16%",
+            "min": 14,
+            "max": 16,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.5 MJ/kg",
+            "min": 10.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.7~1.0%",
+            "min": 0.7,
+            "max": 1,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 50
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 20
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 10
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 15
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 5
+        }
+      ],
+      "weather_adjust": null,
+      "source": "《羊的饲养标准》哺乳母羊段（双羔档 3.0kg 风干料折均值，估算整理）"
+    },
+    {
+      "species_code": "sheep",
+      "variety_code": "sheep_small_tailed_han",
+      "stage": null,
+      "sex_type": "female",
+      "min_weight": 40,
+      "max_weight": 75,
+      "nutrition": {
+        "daily_feed_kg_per_head": 1.9,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "11~13%",
+            "min": 11,
+            "max": 13,
+            "unit": "%"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 50
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 14
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 16
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 17
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "《羊的饲养标准》空怀母羊段（空怀期兜底；妊娠/泌乳请在圈舍设置对应阶段）（估算整理）"
+    },
+    {
+      "species_code": "cattle",
+      "variety_code": "cattle_beef",
+      "stage": "weaning",
+      "sex_type": "all",
+      "min_weight": 120,
+      "max_weight": 200,
+      "nutrition": {
+        "daily_feed_kg_per_head": 4,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "15~17%",
+            "min": 15,
+            "max": 17,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥12.0 MJ/kg",
+            "min": 12,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 52
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 20
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 12
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 13
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "肉牛饲养管理技术行标断奶犊牛段 · 优质肉牛饲养管理规程犊牛补饲（估算整理）"
+    },
+    {
+      "species_code": "cattle",
+      "variety_code": "cattle_beef",
+      "stage": "fattening",
+      "sex_type": "all",
+      "min_weight": 250,
+      "max_weight": 550,
+      "nutrition": {
+        "daily_feed_kg_per_head": 9.5,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "11~13%",
+            "min": 11,
+            "max": 13,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥12.5 MJ/kg",
+            "min": 12.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.4~0.8%",
+            "min": 0.4,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 60
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 14
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 12
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 11
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 815《肉牛饲养标准》育肥牛段 · 皖东牛规程架子牛育肥（精补料 1.2%~1.4% 体重）（估算整理）"
+    },
+    {
+      "species_code": "cattle",
+      "variety_code": "cattle_beef",
+      "stage": "growing",
+      "sex_type": "all",
+      "min_weight": 150,
+      "max_weight": 250,
+      "nutrition": {
+        "daily_feed_kg_per_head": 7,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "13~15%",
+            "min": 13,
+            "max": 15,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥12.0 MJ/kg",
+            "min": 12,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.4~0.8%",
+            "min": 0.4,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 55
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 15
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 14
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 13
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 815《肉牛饲养标准》育成牛段（12 月龄 DMI 8.5~11kg、CP 14%→13%）（估算整理）"
+    },
+    {
+      "species_code": "cattle",
+      "variety_code": "cattle_beef",
+      "stage": "gestation",
+      "sex_type": "female",
+      "min_weight": 350,
+      "max_weight": 600,
+      "nutrition": {
+        "daily_feed_kg_per_head": 9,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "11~13%",
+            "min": 11,
+            "max": 13,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.5 MJ/kg",
+            "min": 10.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.8%",
+            "min": 0.5,
+            "max": 0.8,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 40
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 10
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 12
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 30
+        },
+        {
+          "name": "青贮玉米",
+          "ratio_pct": 5
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "优质肉牛饲养管理规程妊娠母牛段（前期精料 1.5~2kg、后期 2~3kg + 优质粗料）· 肉牛养殖技术要点（估算整理）"
+    },
+    {
+      "species_code": "cattle",
+      "variety_code": "cattle_beef",
+      "stage": "lactation",
+      "sex_type": "female",
+      "min_weight": 350,
+      "max_weight": 600,
+      "nutrition": {
+        "daily_feed_kg_per_head": 10,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "11~13%",
+            "min": 11,
+            "max": 13,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.5 MJ/kg",
+            "min": 10.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.5~0.9%",
+            "min": 0.5,
+            "max": 0.9,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 42
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 12
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 12
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 26
+        },
+        {
+          "name": "青贮玉米",
+          "ratio_pct": 5
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "呼伦贝尔市农牧局肉牛技术要点（哺乳母牛 DMI 9~11kg、CP 10%~11%，取上限整理）· 优质肉牛规程哺乳期精料 CP≥16%（估算整理）"
+    },
+    {
+      "species_code": "cattle",
+      "variety_code": "cattle_dairy",
+      "stage": "growing",
+      "sex_type": "all",
+      "min_weight": 200,
+      "max_weight": 350,
+      "nutrition": {
+        "daily_feed_kg_per_head": 8,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "13~15%",
+            "min": 13,
+            "max": 15,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥12.0 MJ/kg",
+            "min": 12,
+            "max": null,
+            "unit": "MJ/kg"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 55
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 15
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 14
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 13
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 815《肉牛饲养标准》育成牛段（估算整理）"
+    },
+    {
+      "species_code": "cattle",
+      "variety_code": "cattle_dairy",
+      "stage": null,
+      "sex_type": "female",
+      "min_weight": 450,
+      "max_weight": 650,
+      "nutrition": {
+        "daily_feed_kg_per_head": 12,
+        "feeds_per_day": 3,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "14~16%",
+            "min": 14,
+            "max": 16,
+            "unit": "%"
+          },
+          {
+            "name": "钙",
+            "required": "0.6~0.9%",
+            "min": 0.6,
+            "max": 0.9,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 52
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 18
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 14
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 13
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 3
+        }
+      ],
+      "weather_adjust": null,
+      "source": "NY/T 815《牛饲养标准》泌乳牛段 · 奶牛饲养管理行标泌乳前期段（CP 14%~15%、DMI 体重 3.0%~3.2%）（估算整理）"
+    },
+    {
+      "species_code": "cattle",
+      "variety_code": "cattle_dairy",
+      "stage": "gestation",
+      "sex_type": "female",
+      "min_weight": 450,
+      "max_weight": 650,
+      "nutrition": {
+        "daily_feed_kg_per_head": 9.5,
+        "feeds_per_day": 2,
+        "indicators": [
+          {
+            "name": "粗蛋白",
+            "required": "12~14%",
+            "min": 12,
+            "max": 14,
+            "unit": "%"
+          },
+          {
+            "name": "消化能",
+            "required": "≥10.5 MJ/kg",
+            "min": 10.5,
+            "max": null,
+            "unit": "MJ/kg"
+          },
+          {
+            "name": "钙",
+            "required": "0.6~0.9%",
+            "min": 0.6,
+            "max": 0.9,
+            "unit": "%"
+          }
+        ]
+      },
+      "formula": [
+        {
+          "name": "玉米",
+          "ratio_pct": 45
+        },
+        {
+          "name": "豆粕",
+          "ratio_pct": 12
+        },
+        {
+          "name": "麸皮",
+          "ratio_pct": 14
+        },
+        {
+          "name": "干草粉",
+          "ratio_pct": 25
+        },
+        {
+          "name": "预混料",
+          "ratio_pct": 4
+        }
+      ],
+      "weather_adjust": null,
+      "source": "奶牛饲养管理行标干奶/围产前期段（CP 12%~14%）· 优质肉牛规程妊娠后期（估算整理）"
+    }
+  ],
+  "ingredient_nutrition": {
+    "玉米": {
+      "cp_pct": 8,
+      "lys_pct": 0.24,
+      "de_mj": 14.5,
+      "ca_pct": 0.02
+    },
+    "麸皮": {
+      "cp_pct": 15.7,
+      "lys_pct": 0.58,
+      "de_mj": 11,
+      "ca_pct": 0.11
+    },
+    "豆粕": {
+      "cp_pct": 43,
+      "lys_pct": 2.45,
+      "de_mj": 14.3,
+      "ca_pct": 0.3
+    },
+    "菜籽粕": {
+      "cp_pct": 36,
+      "lys_pct": 1.3,
+      "de_mj": 12,
+      "ca_pct": 0.65
+    },
+    "稻谷": {
+      "cp_pct": 7.8,
+      "lys_pct": 0.29,
+      "de_mj": 12,
+      "ca_pct": 0.07
+    },
+    "鱼粉": {
+      "cp_pct": 62,
+      "lys_pct": 4.5,
+      "de_mj": 12.5,
+      "ca_pct": 4.5
+    },
+    "预混料": {
+      "cp_pct": 0,
+      "lys_pct": 6,
+      "de_mj": 0,
+      "ca_pct": 12
+    },
+    "青贮玉米": {
+      "cp_pct": 2.1,
+      "lys_pct": 0.05,
+      "de_mj": 2.6,
+      "ca_pct": 0.1
+    },
+    "干草粉": {
+      "cp_pct": 8.8,
+      "lys_pct": 0.28,
+      "de_mj": 7,
+      "ca_pct": 0.57
+    }
+  },
+  "price_seed": [
+    {
+      "ingredient_name": "玉米",
+      "unit_price": 2.2,
+      "days_ago": 5
+    },
+    {
+      "ingredient_name": "豆粕",
+      "unit_price": 3.35,
+      "days_ago": 5
+    },
+    {
+      "ingredient_name": "麸皮",
+      "unit_price": 1.5,
+      "days_ago": 5
+    },
+    {
+      "ingredient_name": "菜籽粕",
+      "unit_price": 2.48,
+      "days_ago": 5
+    },
+    {
+      "ingredient_name": "稻谷",
+      "unit_price": 2.5,
+      "days_ago": 45
+    },
+    {
+      "ingredient_name": "鱼粉",
+      "unit_price": 19,
+      "days_ago": 3
+    },
+    {
+      "ingredient_name": "预混料",
+      "unit_price": 6.5,
+      "days_ago": 5
+    },
+    {
+      "ingredient_name": "青贮玉米",
+      "unit_price": 0.8,
+      "days_ago": 12
+    },
+    {
+      "ingredient_name": "干草粉",
+      "unit_price": 1.3,
+      "days_ago": 7
+    }
+  ],
+  "alt_templates": {
+    "pig_fattening|fattening": [
+      {
+        "label": "菜籽粕替代·营养平衡",
+        "requiresExclude": [
+          "豆粕"
+        ],
+        "formula": [
+          {
+            "name": "玉米",
+            "ratio_pct": 68
+          },
+          {
+            "name": "麸皮",
+            "ratio_pct": 9
+          },
+          {
+            "name": "菜籽粕",
+            "ratio_pct": 18
+          },
+          {
+            "name": "预混料",
+            "ratio_pct": 5
+          }
+        ]
+      },
+      {
+        "label": "稻谷替代·成本最低",
+        "formula": [
+          {
+            "name": "玉米",
+            "ratio_pct": 56
+          },
+          {
+            "name": "稻谷",
+            "ratio_pct": 10
+          },
+          {
+            "name": "麸皮",
+            "ratio_pct": 12
+          },
+          {
+            "name": "菜籽粕",
+            "ratio_pct": 17
+          },
+          {
+            "name": "预混料",
+            "ratio_pct": 5
+          }
+        ]
+      },
+      {
+        "label": "鱼粉替代·营养更优",
+        "formula": [
+          {
+            "name": "玉米",
+            "ratio_pct": 68
+          },
+          {
+            "name": "麸皮",
+            "ratio_pct": 10
+          },
+          {
+            "name": "鱼粉",
+            "ratio_pct": 3
+          },
+          {
+            "name": "菜籽粕",
+            "ratio_pct": 14
+          },
+          {
+            "name": "预混料",
+            "ratio_pct": 5
+          }
+        ]
+      }
+    ]
+  },
+  "substitute_map": {
+    "豆粕": [
+      "菜籽粕",
+      "鱼粉"
+    ],
+    "玉米": [
+      "稻谷",
+      "麸皮"
+    ],
+    "麸皮": [
+      "稻谷"
+    ],
+    "菜籽粕": [
+      "豆粕"
+    ],
+    "稻谷": [
+      "玉米"
+    ],
+    "鱼粉": [
+      "豆粕"
+    ],
+    "预混料": [],
+    "青贮玉米": [],
+    "干草粉": [
+      "青贮玉米"
+    ]
+  },
+  "standard_daily_gain": {
+    "pig_fattening": 0.75,
+    "pig_piglet": 0.45,
+    "pig_sow": null,
+    "sheep_hu": 0.25,
+    "sheep_small_tailed_han": 0.28,
+    "cattle_beef": 1.2,
+    "cattle_dairy": null,
+    "common": null
+  }
+}

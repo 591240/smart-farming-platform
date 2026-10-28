@@ -1,0 +1,422 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ===== 智慧养殖 · 现代田园 Refined Agritech ===== */
+/* 设计语言：克制、细节。光影分层，数字主角，自然色彩。 */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  /* 语义色映射 */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* 品牌色阶 */
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-900: var(--primary-900);
+
+  /* 功能色 */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  /* 图表色 */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-standard: var(--chart-standard);
+
+  /* 页面层次色 */
+  --color-bg-page: var(--bg-page);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-bg-inset: var(--bg-inset);
+  --color-border-strong: var(--border-strong);
+
+  /* 文字层次 */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+
+  /* 侧边栏 */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* 字体 */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+/* ===== Design Tokens ===== */
+:root {
+  --radius: 0.75rem; /* 12px 卡片圆角 */
+
+  /* 字体族 */
+  --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Inter", "SF Mono", "Cascadia Code", "Segoe UI Mono", monospace;
+
+  /* ===== 品牌主色 · 农业绿 ===== */
+  --primary-50: #F0FAF5;
+  --primary-100: #E6F5EE;
+  --primary-200: #C9E8D8;
+  --primary-500: #2E9E6B;
+  --primary-600: #26895C;
+  --primary-700: #1F7A50;
+  --primary-900: #145237;
+
+  /* ===== 中性色 · 微暖灰（1° 绿色温）===== */
+  --bg-page: #F7F8F6;
+  --card: #FFFFFF;
+  --bg-subtle: #F2F4F1;
+  --bg-inset: #EDEFEB;
+  --border: #E7E9E4;
+  --border-strong: #D5D8D1;
+
+  /* ===== 文字层次 ===== */
+  --text-primary: #1E2420;
+  --text-secondary: #5F6B62;
+  --text-tertiary: #8C958E;
+  --text-disabled: #B4BAB3;
+
+  /* ===== 功能色 ===== */
+  --success: #2E9E6B;
+  --warning: #E8A23D;
+  --danger: #D9534F;
+  --info: #5B8DEF;
+
+  /* ===== 图表色 ===== */
+  --chart-1: #2E9E6B;
+  --chart-2: #5B8DEF;
+  --chart-3: #E8A23D;
+  --chart-standard: #C4CAD3;
+
+  /* ===== shadcn 语义映射 ===== */
+  --background: var(--bg-page);
+  --foreground: var(--text-primary);
+  --card-foreground: var(--text-primary);
+  --popover: #FFFFFF;
+  --popover-foreground: var(--text-primary);
+  --primary: var(--primary-500);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--bg-subtle);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--bg-subtle);
+  --muted-foreground: var(--text-secondary);
+  --accent: var(--primary-50);
+  --accent-foreground: var(--primary-700);
+  --destructive: var(--danger);
+  --destructive-foreground: #FFFFFF;
+  --input: var(--border-strong);
+  --ring: var(--primary-500);
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--primary-500);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: var(--primary-100);
+  --sidebar-accent-foreground: var(--primary-700);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--primary-500);
+
+  /* ===== 阴影体系（三级）===== */
+  --e1: 0 1px 2px rgba(30,36,32,.04), 0 4px 12px rgba(30,36,32,.04);
+  --e2: 0 2px 6px rgba(30,36,32,.06), 0 12px 32px rgba(30,36,32,.10);
+  --e3: 0 4px 12px rgba(30,36,32,.08), 0 24px 64px rgba(30,36,32,.16);
+  --e-sidebar: 0 1px 0 rgba(30,36,32,.04);
+
+  /* ===== 动效令牌 ===== */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 280ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* ===== 遮罩 ===== */
+  --overlay: rgba(20, 30, 24, 0.45);
+}
+
+/* ===== 基础样式 ===== */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-bg-page);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ===== 工具类 ===== */
+/* 等宽数字 */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+/* 阴影层级 */
+.e1 { box-shadow: var(--e1); }
+.e2 { box-shadow: var(--e2); }
+.e3 { box-shadow: var(--e3); }
+
+/* 卡片顶部微高光 */
+.card-highlight {
+  box-shadow: var(--e1), inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* hover 抬升 */
+.hover-lift {
+  transition: transform var(--duration-base) var(--ease-standard),
+              box-shadow var(--duration-base) var(--ease-standard);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--e2);
+}
+
+/* 在线呼吸点 */
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.animate-breathe {
+  animation: breathe 2s ease-in-out infinite;
+}
+
+/* 预产期倒计时微脉动（06 规范 4.4：3 天内红数字微脉动，全页唯一情绪焦点动效；
+   reduced-motion 下由全局规则呈现终态） */
+@keyframes due-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+.animate-due-pulse {
+  animation: due-pulse 1.6s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* 骨架屏 shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--bg-subtle) 25%, rgba(255,255,255,.55) 50%, var(--bg-subtle) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+/* 打字光标 */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink-cursor 1s step-end infinite;
+}
+
+/* 页面氛围带 */
+.ambient-band {
+  background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg-page) 100%);
+  position: relative;
+}
+.ambient-band::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(232, 162, 61, 0.06);
+  pointer-events: none;
+}
+
+/* 数字滚动高亮 */
+@keyframes number-flash {
+  0% { background-color: var(--primary-100); }
+  100% { background-color: transparent; }
+}
+.number-flash {
+  animation: number-flash 600ms ease-out;
+}
+
+/* 告警色条闪烁 */
+@keyframes bar-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.alert-bar-flash {
+  animation: bar-flash 400ms ease-in-out 2;
+}
+
+/* 表格加载条（03 节：primary-500 顶部 2px 进度条，F04 台账页） */
+@keyframes loadingbar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+.table-loadingbar {
+  animation: loadingbar 1.2s ease-in-out infinite;
+}
+
+/* 弹窗进出场 */
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes modal-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.96); }
+}
+.animate-modal-in {
+  animation: modal-in var(--duration-slow) var(--ease-standard);
+}
+
+/* 顶部滑入 */
+@keyframes slide-in-top {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-in {
+  animation: slide-in-top var(--duration-base) var(--ease-standard);
+}
+
+/* 底部滑入 (toast) */
+@keyframes slide-in-bottom {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-toast-in {
+  animation: slide-in-bottom var(--duration-base) var(--ease-standard);
+}
+
+/* 减弱动效 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 文字 hover 毛玻璃感（登录页品牌标题）：默认清晰，鼠标移上去只轻微虚化——
+   一点点毛玻璃质感即可，保证文字可读；reduced-motion 下由全局规则直接呈现终态 */
+.text-blur-hover {
+  cursor: default;
+  transition: filter var(--duration-slow) var(--ease-standard);
+  will-change: filter;
+}
+.text-blur-hover:hover {
+  filter: blur(1.2px) brightness(1.04);
+}
+
+/* 登录页品牌区 hover 动效（标题关键词点亮 / 副标题提亮 / 特性条目位移发光） */
+/* 关键词（AI 兽医 / AI 营养师）：标题 hover 或自身 hover 时琥珀光晕点亮 */
+.brand-glow {
+  cursor: default;
+  transition:
+    text-shadow var(--duration-slow) var(--ease-standard),
+    color var(--duration-slow) var(--ease-standard);
+}
+.text-blur-hover:hover .brand-glow,
+.brand-glow:hover {
+  color: #f6ddab;
+  text-shadow:
+    0 0 16px rgba(232, 162, 61, 0.6),
+    0 0 44px rgba(232, 162, 61, 0.28);
+}
+
+/* 副标题描述：hover 提亮 */
+.brand-sub {
+  cursor: default;
+  transition: color var(--duration-base) var(--ease-standard);
+}
+.brand-sub:hover {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* 特性条目：整体右移 + 底光浮现；图标放大点亮（发光走琥珀暖调，对齐品牌色） */
+.brand-item {
+  cursor: default;
+  border-radius: 12px;
+  padding: 10px;
+  margin: -10px;
+  transition:
+    transform var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard);
+}
+.brand-item:hover {
+  transform: translateX(6px);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.brand-item .brand-item-icon {
+  transition:
+    transform var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+.brand-item:hover .brand-item-icon {
+  transform: scale(1.12);
+  background-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 18px rgba(232, 162, 61, 0.4);
+}
+
+/* 品牌 Logo 叶子：hover 轻摆 */
+.brand-leaf {
+  transition: transform var(--duration-slow) var(--ease-standard);
+  transform-origin: 30% 70%;
+}
+.brand-logo:hover .brand-leaf {
+  transform: rotate(-10deg) scale(1.08);
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-inset);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}

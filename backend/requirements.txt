@@ -1,0 +1,36 @@
+fastapi>=0.115
+uvicorn>=0.30
+httpx>=0.27
+pydantic>=2.7
+pydantic-settings>=2.3
+sqlalchemy[asyncio]>=2.0
+asyncpg>=0.29
+pyjwt>=2.9
+bcrypt>=4.0
+# F05/F10 LangGraph 问诊工作流 + PostgreSQL checkpoint（01-架构 9.4）
+# 注意：checkpoint 走 psycopg（同步驱动内核 + 异步适配），与业务层的 asyncpg 并存，
+# 两者连的是同一个库不同 schema（业务 public / checkpoint langgraph）。
+langgraph>=1.2
+langgraph-checkpoint-postgres>=3.1
+psycopg[binary,pool]>=3.2
+
+# D2 最小成本配方 LP 求解（scipy.optimize.linprog / HiGHS）
+scipy>=1.13
+
+# F03 设备上行 MQTT 桥接（app/services/mqtt_bridge.py：订阅 EMQX → 与 HTTP 共用同一条校验链）
+paho-mqtt>=2.1
+
+# C-26 跨进程状态（app/core/statestore.py：去重/防抖/合并窗口/限流/告警广播 Pub/Sub）
+# 连不上时状态层自动退回进程内存，所以缺包也不该拖垮启动——import 在 init() 内部延迟做
+redis>=5.0
+
+# F05 向量检索（app/agents/vector_store.py 顶层 import，缺包应用启动即失败）
+pymilvus>=3.0
+# F16 知识库附件上传（FastAPI 的 File/Form 依赖，缺包路由注册即抛错）
+python-multipart>=0.0.9
+
+# 气象 MCP Server/Client（app/mcp_weather/：weather_answer 节点经 MCP 协议动态调用天气工具）
+# 锁 <2：mcp 2.x 把 FastMCP 改名 MCPServer 且 API 不兼容，v1 是当前生态最普及的稳定版
+mcp>=1.9,<2
+# smoke_ws.py 的客户端依赖（运行时不需要，跑测试需要）
+websockets>=12
