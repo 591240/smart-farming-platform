@@ -14,8 +14,29 @@ __pycache__/
 
 # 工作区本地数据
 .workbuddy/
+.workbuddy-ai/
 .loomy-attachments/
+.qoder/
+.qoder-office-pptx-locks/
+.cloudstudio
 *.log
+*.tsbuildinfo
+
+# AI 任务产物/生成图片（非产品代码，不入库）
+output/
+generated-images/
+artifacts/
+
+# 答辩/面试准备材料与 PPT 生成工具残留（与产品文档无关，不入库）
+_presentation/
+ppt-frontend/
+docs/page-global-config.json
+docs/pages.json
+docs/project.json
+docs/posters/
+docs/product/
+docs/20-面试拷问手册-*.md
+docs/22-答辩速记卡-*.md
 
 # 知识库上传文件（用户数据不入库 git，库里只存元数据）
 # 真实落盘路径是 backend/app/uploads/kb/（kb.py 的 UPLOAD_DIR = app/uploads/kb）。

@@ -128,8 +128,8 @@
 
 ```json
 // 请求
-{"farm_name":"文彬家庭农场","province":"湖南省","city":"长沙市","county":"长沙县",
- "adcode":"430121","address":"XX镇XX村","contact_person":"章文彬","phone":"13800000000"}
+{"farm_name":"示例家庭农场","province":"湖南省","city":"长沙市","county":"长沙县",
+ "adcode":"430121","address":"XX镇XX村","contact_person":"张某某","phone":"13800000000"}
 ```
 - adcode 由前端行政区划选择器自动带出；DELETE 为逻辑删除
 
