@@ -31,18 +31,19 @@ function probe() {
       msg.value = r.available
         ? {
             ok: true,
-            text: `连通正常 —— 服务端取数 source=${r.source ?? 'live'}${
-              r.degraded ? '（降级读缓存：上游失败或超时）' : ''
-            }`,
+            text: r.degraded
+              ? '连通正常 —— 上游气象服务暂时失败，正在使用缓存数据，功能不受影响'
+              : '连通正常 —— 气象数据实时获取中',
           }
         : {
             ok: false,
-            text: `无数据 —— ${
-              r.reason === 'no_farm' ? '尚未创建养殖场' : '养殖场地址不完整（缺 adcode），服务端无法定位到县级区域'
-            }`,
+            text:
+              r.reason === 'no_farm'
+                ? '暂无数据 —— 请先创建养殖场'
+                : '暂无数据 —— 养殖场地址不完整，请在「场舍管理」补全详细地址后重试',
           };
     })
-    .catch((e) => (msg.value = { ok: false, text: `连通失败 —— ${e instanceof Error ? e.message : String(e)}` }))
+    .catch((e) => (msg.value = { ok: false, text: `检测失败 —— ${e instanceof Error ? e.message : String(e)}` }))
     .finally(() => (testing.value = false));
 }
 
@@ -51,8 +52,6 @@ const switchRootCls =
   'peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
 const switchThumbCls =
   'pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform';
-
-const codeCls = 'px-1 rounded bg-bg-subtle';
 </script>
 
 <template>
@@ -122,9 +121,7 @@ const codeCls = 'px-1 rounded bg-bg-subtle';
         <div>
           <div class="text-[14px] font-medium text-text-primary">气象数据源</div>
           <div class="text-[12px] text-text-tertiary mt-0.5">
-            取数在服务端：高德 Key 配在根目录 <code :class="codeCls">.env</code> 的
-            <code :class="codeCls">AMAP_WEATHER_KEY</code>（01-架构 G-03，已不再打进前端产物）。
-            这里只检测连通性并如实标出数据来源。
+            气象数据由服务端统一获取并配好密钥，无需手动配置。点下方按钮可检测数据源是否连通。
           </div>
         </div>
       </div>
