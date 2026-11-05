@@ -1,4 +1,4 @@
-// 登录态全局管理（F01）——原 React AuthContext 的 Pinia 等价物。
+// 登录态全局管理（F01）——Pinia 存用户信息、token 与角色。
 // token 持久化于 localStorage（sf_token）；40101 由 api/client.ts 统一清凭证并跳登录。
 
 import { defineStore } from 'pinia';

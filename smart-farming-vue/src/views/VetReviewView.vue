@@ -65,7 +65,7 @@ function refresh() {
 }
 
 // ===== 复核弹窗（approve 意见选填 / reject 三必填 + 药库校验 42201 逐字段回显）=====
-// 原 React ReviewDialog 在 reviewTarget 变化时重新挂载；这里打开时重置全部表单态以保持同等行为。
+// 打开复核弹窗时重置全部表单态，避免残留上一条记录的内容。
 const action = ref<'approve' | 'reject'>('approve');
 const opinion = ref('');
 const revisedDiagnosis = ref('');
@@ -139,7 +139,7 @@ async function submitReview() {
       <p class="text-[13.5px] text-text-secondary max-w-[420px] leading-[1.7]">
         养殖户问诊判定为高风险时，病例会自动进入这里；
         超过 48 小时未复核的病例将按原诊断自动降级收尾。
-        可在「系统设置 → 演示环境」载入演示账号与超时病例体验完整链路。
+        高危病例可在 AI 问诊就高危主诉自然产生（hitl_gate 节点）。
       </p>
     </div>
 

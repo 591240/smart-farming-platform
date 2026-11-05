@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Eye, EyeOff, Leaf, ShieldCheck, LineChart, HeartPulse, RotateCcw } from 'lucide-vue-next';
+import { Eye, EyeOff, Leaf, ShieldCheck, LineChart, HeartPulse } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
-import { clearToken } from '@/api/client';
 import { useAuthStore } from '@/stores/auth';
 import { ApiError, isValidPhone, validatePassword } from '@/lib/api-contract';
 
@@ -78,29 +77,12 @@ async function handleSubmit() {
   }
 }
 
-function fillDemo() {
-  mode.value = 'login';
-  phone.value = '13000000010';
-  password.value = 'story123456';
-  fieldErr.value = {};
-  topErr.value = null;
-}
-
 const inlineToast = ref<string | null>(null);
 let toastTimer: number | null = null;
 function toastInline(msg: string) {
   inlineToast.value = msg;
   if (toastTimer) window.clearTimeout(toastTimer);
   toastTimer = window.setTimeout(() => (inlineToast.value = null), 2400);
-}
-
-function handleReset() {
-  clearToken();
-  fieldErr.value = {};
-  topErr.value = null;
-  toastInline(
-    '已退出登录并清除本机缓存。业务数据都在服务端，未做任何删除——需要重置数据库请用 backend/scripts/reset_db.py。',
-  );
 }
 
 const features = [
@@ -338,18 +320,6 @@ const features = [
             {{ mode === 'login' ? '登录' : '注册并开始引导' }}
           </button>
         </form>
-
-        <div class="mt-6 pt-5 border-t border-border flex items-center justify-between text-[12px] text-text-tertiary">
-          <button type="button" class="hover:text-primary transition-colors" @click="fillDemo">填充演示账号</button>
-          <button
-            type="button"
-            class="hover:text-primary transition-colors inline-flex items-center gap-1"
-            @click="handleReset"
-          >
-            <RotateCcw :size="12" :stroke-width="1.5" />
-            退出登录并清本机缓存
-          </button>
-        </div>
       </div>
     </div>
   </div>

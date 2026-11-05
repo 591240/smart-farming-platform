@@ -270,7 +270,7 @@ function openCreate() {
 }
 
 async function submitCreate() {
-  // 与 React 闭包一致：提交瞬间取值，请求期间继续编辑不影响本次结果
+  // 提交瞬间取值：请求期间继续编辑不影响本次结果
   const penId = createPenId.value;
   const tagNo = createTagNo.value;
   const parity = createParity.value;
@@ -339,7 +339,7 @@ const eventErr = ref<string | null>(null);
 const eventLoading = ref(false);
 
 function openEvent(female: BreedingFemaleItem, type: LifecycleEventType) {
-  // React 中同一实例只换 props 时表单状态保留：抽屉在弹窗之上，可在弹窗打开时切换动作
+  // 抽屉叠在弹窗之上，弹窗打开时切换动作要保留已填表单态，因此只换数据不重建
   if (eventFemale.value) {
     eventFemale.value = female;
     eventType.value = type;
@@ -359,7 +359,7 @@ function openEvent(female: BreedingFemaleItem, type: LifecycleEventType) {
 }
 
 async function submitEvent() {
-  // 与 React 闭包一致：提交瞬间取值
+  // 提交瞬间取值
   const female = eventFemale.value;
   if (!female) return;
   const type = eventType.value;
@@ -474,7 +474,7 @@ function openBatch() {
 }
 
 async function submitBatch() {
-  // 与 React 闭包一致：提交瞬间取值
+  // 提交瞬间取值
   const penId = batchPenId.value;
   const type = batchType.value;
   const toStage = batchToStage.value;
@@ -566,7 +566,7 @@ async function saveDrawerEdit() {
   }
 }
 
-// 数字输入：与 React 受控输入一致（非法/负数即时回 0，并同步 DOM 值）
+// 数字输入：非法/负数即时回 0，并同步 DOM 值
 function nonNegIntInputHandler(target: Ref<number>) {
   return (e: Event) => {
     const el = e.target as HTMLInputElement;

@@ -7,11 +7,13 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
-import { Camera, RotateCcw, Warehouse, X } from 'lucide-vue-next';
+import { Camera, Cloud, CloudRain, RotateCcw, Sun, Warehouse, X } from 'lucide-vue-next';
 import { apiListFarms, apiListPens } from '@/api/auth-api';
+import { apiSensorHistory } from '@/api/device-api';
 import { apiAnalyzeScenePhoto, apiSceneLatest, type SceneAnalyzeResult } from '@/api/scene-api';
+import { apiGetWeather } from '@/api/weather-api';
 import BarnShowcase from '@/components/showcase3d/BarnShowcase.vue';
-import type { BarnFocus, BarnInstance, HotspotKey, Species } from '@/components/showcase3d/types';
+import type { BarnFocus, BarnInstance, HotspotKey, Species, WeatherMode } from '@/components/showcase3d/types';
 
 const ALERT_TYPE_LABEL: Record<string, string> = {
   sensor: '传感器告警', climate: '气象告警', vision: '视觉告警',
@@ -119,6 +121,47 @@ const totals = computed(() => {
   return { male: tm, female: tf, all: tm + tf };
 });
 
+// ----- F08 天气联动：今日天气现象 → 3D 场景天气模式（晴/多云/雨） -----
+const weatherQ = useQuery({
+  queryKey: computed(() => ['showcase-weather', farmIds.value[0] ?? 0]),
+  queryFn: () => apiGetWeather(farmIds.value[0]),
+  enabled: computed(() => farmIds.value.length > 0),
+  staleTime: 10 * 60 * 1000,
+});
+const weatherText = computed(() => weatherQ.data.value?.forecast?.[0]?.text_day ?? '');
+const weatherMode = computed<WeatherMode | null>(() => {
+  const t = weatherText.value;
+  if (!t) return null;
+  if (/雨|雪|雷|冰雹/.test(t)) return 'rain';
+  if (/阴|云|雾|霾|沙/.test(t)) return 'cloudy';
+  return 'sunny';
+});
+
+// ----- 环控联动：各圈最近温度读数，≥30℃ 的圈舍在 3D 里泛红脉冲 -----
+const HOT_TEMP = 30;
+const tempQ = useQuery({
+  queryKey: computed(() => ['showcase-temps', farmIds.value.join(',')]),
+  queryFn: async () => {
+    const pens = pensQ.data.value ?? [];
+    const from = new Date(Date.now() - 24 * 3_600_000).toISOString();
+    return Promise.all(pens.map(async (p) => {
+      try {
+        const h = await apiSensorHistory({ pen_id: p.pen_id, metric: 'temperature', from });
+        const pts = h.points ?? [];
+        return { name: p.pen_name, temp: pts.length ? pts[pts.length - 1].value : null };
+      } catch {
+        return { name: p.pen_name, temp: null as number | null };
+      }
+    }));
+  },
+  enabled: computed(() => (pensQ.data.value?.length ?? 0) > 0),
+  staleTime: 60 * 1000,
+  refetchInterval: 60 * 1000,
+});
+const hotPens = computed(() =>
+  (tempQ.data.value ?? []).filter((t) => t.temp != null && t.temp >= HOT_TEMP).map((t) => t.name),
+);
+
 function onFiles(e: Event): void {
   const files = Array.from((e.target as HTMLInputElement).files ?? []);
   err.value = null;
@@ -158,6 +201,8 @@ async function doAnalyze(): Promise<void> {
       :barns="sceneBarns"
       :focus="focus"
       :photo-config="photo?.config ?? null"
+      :weather="weatherMode"
+      :hot-pens="hotPens"
     />
     <!-- 空状态：未创建圈舍时的引导 -->
     <div v-else class="h-full flex flex-col items-center justify-center gap-3">
@@ -242,6 +287,23 @@ async function doAnalyze(): Promise<void> {
       </div>
     </div>
 
+    <!-- F08 天气联动 + 高温圈舍状态角标 -->
+    <div
+      v-if="weatherText && showScene"
+      class="absolute left-4 top-[104px] z-20 rounded-xl border border-border bg-white/90 backdrop-blur px-3 py-2 text-[12px] shadow-sm"
+    >
+      <div class="flex items-center gap-1.5 text-text-primary">
+        <Sun v-if="weatherMode === 'sunny'" :size="14" :stroke-width="1.5" class="text-[#e8a33d]" />
+        <Cloud v-else-if="weatherMode === 'cloudy'" :size="14" :stroke-width="1.5" class="text-text-tertiary" />
+        <CloudRain v-else :size="14" :stroke-width="1.5" class="text-[#4a7fb5]" />
+        <span>今日 {{ weatherText }} · 场景已同步天气</span>
+      </div>
+      <div v-if="hotPens.length > 0" class="flex items-center gap-1.5 mt-1 text-[#b4271f]">
+        <span class="w-2 h-2 rounded-full bg-[#e03e36] animate-breathe shrink-0" />
+        <span>高温圈舍（≥{{ HOT_TEMP }}℃）：{{ hotPens.join('、') }}</span>
+      </div>
+    </div>
+
     <!-- F15 结果横幅 -->
     <div
       v-if="photo"
@@ -302,7 +364,7 @@ async function doAnalyze(): Promise<void> {
           </button>
         </div>
         <p class="text-[12px] text-text-tertiary mb-3">
-          上传自家场舍照片（数量不限，角度越多识别越准），AI 识别后生成专属 3D 场景（当前为演示识别，切真后接入多模态大模型）。
+          上传自家场舍照片（数量不限，角度越多识别越准），多模态大模型识别后生成专属 3D 场景，结果自动保存、刷新不丢。
         </p>
         <input
           ref="fileInput"

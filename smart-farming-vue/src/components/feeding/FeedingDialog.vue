@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 通用弹窗壳（对齐场舍管理页风格）+ FormError + ModalActions
-// React 版 Modal / FormError / ModalActions 三件套合并为一个 SFC：
+// Modal / FormError / ModalActions 三件套合并为一个 SFC：
 // - error 非空时渲染错误条（原 FormError）
 // - footer 插槽可整体替换底部（原料价格弹窗的「关闭」按钮）
 // - 默认底部为「取消 / 提交」双按钮（原 ModalActions）

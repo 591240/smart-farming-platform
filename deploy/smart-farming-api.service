@@ -28,6 +28,9 @@ WorkingDirectory=/srv/smart-farming/backend
 
 # 只监听回环：公网入口只有 nginx，这既是安全边界也是 X-Forwarded-For 可信的前提
 Environment=AI_HOST=127.0.0.1
+# ProtectHome=true 会把 /home 整个藏掉，psycopg 启动时 stat ~/.postgresql/
+# postgresql.key 拿到 EACCES（而非 ENOENT）直接崩。把 HOME 指到项目根即可绕开
+Environment=HOME=/srv/smart-farming
 # 其余配置（JWT_SECRET / DATABASE_URL / REDIS_URL / LLM_API_KEY …）由应用自己从这个
 # 目录的 .env 读取。刻意不用 EnvironmentFile：unit 的解析规则与 dotenv 不同，
 # 带引号或特殊字符的值会静默错位，排查起来比缺键更难。

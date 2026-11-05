@@ -89,7 +89,7 @@ function startEngine(): void {
 
   scan(document);
 
-  // React 渲染 / 路由切换后新增的节点自动接管
+  // 路由切换 / 异步渲染后新增的节点自动接管
   const mutationObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {

@@ -8,7 +8,7 @@
 
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
-import { Download, Eraser, NotebookText } from 'lucide-vue-next';
+import { ChevronDown, Download, Eraser, NotebookText } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import { apiListFarms, apiListPens } from '@/api/auth-api';
 import { apiExportRecords, apiListRecords, type LedgerExtColumn, type LedgerRecordItem } from '@/api/record-api';
@@ -43,17 +43,12 @@ function relTime(iso: string): string {
 const SELECT_CLS =
   'h-[36px] px-3 rounded-[10px] border border-border bg-card text-[13.5px] text-text-primary outline-none transition-colors focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed';
 
-const PAGER_BTN =
-  'min-w-[30px] h-[30px] px-1.5 rounded-[8px] text-[12.5px] transition-colors flex items-center justify-center';
-
 // ----- 筛选状态（任一变更即时刷新，FR-05：无需手动点查询）-----
 const farmId = ref(0);
 const penId = ref(0);
 const recordType = ref('');
 const from = ref('');
 const to = ref('');
-const page = ref(1);
-const pageSize = ref(20);
 const toast = ref<{ kind: 'ok' | 'err'; text: string } | null>(null);
 const exporting = ref(false);
 
@@ -77,8 +72,6 @@ const listQuery = useQuery({
     recordType.value,
     from.value,
     to.value,
-    page.value,
-    pageSize.value,
   ]),
   queryFn: () =>
     apiListRecords({
@@ -87,8 +80,8 @@ const listQuery = useQuery({
       record_type: recordType.value || undefined,
       from: from.value || undefined,
       to: to.value || undefined,
-      page: page.value,
-      page_size: pageSize.value,
+      page: 1,
+      page_size: 500, // 按圈舍折叠分组必须整拉（后端上限 500）
     }),
   enabled: computed(() => !timeInverted.value), // 时间倒置时不发请求
 });
@@ -99,9 +92,8 @@ const isFetching = computed(() => listQuery.isFetching.value);
 const isError = computed(() => listQuery.isError.value);
 const listError = computed(() => listQuery.error.value);
 
-// 筛选变更统一入口：显式 Partial 增量（farm 变化时联动清空圈舍），并回到第 1 页
+// 筛选变更统一入口：显式 Partial 增量（farm 变化时联动清空圈舍）
 function patchFilter(next: Partial<{ farmId: number; penId: number; recordType: string; from: string; to: string }>) {
-  page.value = 1;
   if (next.farmId !== undefined) {
     if (next.farmId !== farmId.value) penId.value = 0; // 换场后原圈舍选择失效
     farmId.value = next.farmId;
@@ -134,7 +126,6 @@ function clearFilters() {
   recordType.value = '';
   from.value = '';
   to.value = '';
-  page.value = 1;
 }
 
 let toastTimer: number | null = null;
@@ -166,16 +157,45 @@ async function handleExport() {
   }
 }
 
-const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)));
-
-function setPage(p: number) {
-  page.value = p;
+// ===== 按圈舍折叠分组（默认收起，点圈舍行展开明细）=====
+interface PenGroup {
+  pen_name: string;
+  items: LedgerRecordItem[];
+  typeSummary: string;
 }
-
-function changePageSize(n: number) {
-  pageSize.value = n;
-  page.value = 1;
+const groups = computed<PenGroup[]>(() => {
+  const map = new Map<string, PenGroup>();
+  for (const r of records.value) {
+    let g = map.get(r.pen_name);
+    if (!g) {
+      g = { pen_name: r.pen_name, items: [], typeSummary: '' };
+      map.set(r.pen_name, g);
+    }
+    g.items.push(r);
+  }
+  for (const g of map.values()) {
+    const counts = new Map<string, number>();
+    for (const r of g.items) counts.set(r.record_type, (counts.get(r.record_type) ?? 0) + 1);
+    g.typeSummary = [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([t, n]) => `${RECORD_TYPE_LABEL[t] ?? t} ${n}`)
+      .join(' · ');
+  }
+  return [...map.values()];
+});
+const expanded = ref<Record<string, boolean>>({});
+function toggleGroup(penName: string) {
+  expanded.value[penName] = !expanded.value[penName];
 }
+const allExpanded = computed(() => groups.value.length > 0 && groups.value.every((g) => expanded.value[g.pen_name]));
+function toggleAllGroups() {
+  const next = !allExpanded.value;
+  const patch: Record<string, boolean> = {};
+  for (const g of groups.value) patch[g.pen_name] = next;
+  expanded.value = patch;
+}
+const overCap = computed(() => total.value > 500);
 
 // 类型微标（未知类型回退台账类型字典）
 function tagOf(type: string) {
@@ -194,25 +214,6 @@ function extShown(r: LedgerRecordItem, field: string): string | number {
   const v = r.record_ext?.[field];
   if (v === undefined || v === '') return '—';
   return typeof v === 'number' && v > 0 ? `+${v}` : v;
-}
-
-// 页码（≤7 全展示，>7 用省略号折叠，06 规范 3 节分页器规范）
-const pagerItems = computed<(number | '...')[]>(() => {
-  const items: (number | '...')[] = [];
-  if (totalPages.value <= 7) {
-    for (let i = 1; i <= totalPages.value; i++) items.push(i);
-  } else {
-    items.push(1);
-    if (page.value > 3) items.push('...');
-    for (let i = Math.max(2, page.value - 1); i <= Math.min(totalPages.value - 1, page.value + 1); i++) items.push(i);
-    if (page.value < totalPages.value - 2) items.push('...');
-    items.push(totalPages.value);
-  }
-  return items;
-});
-
-function goPage(it: number | '...') {
-  if (typeof it === 'number') setPage(it);
 }
 </script>
 
@@ -363,6 +364,20 @@ function goPage(it: number | '...') {
         <div class="h-full w-1/3 bg-primary-600 table-loadingbar" />
       </div>
 
+      <!-- 圈舍折叠工具条 -->
+      <div class="flex items-center justify-between px-5 py-2.5 border-b border-border">
+        <span class="text-[12.5px] text-text-tertiary">
+          共 {{ total.toLocaleString() }} 条 · {{ groups.length }} 个圈舍 · 点击圈舍行展开明细
+        </span>
+        <button
+          v-if="groups.length > 0"
+          class="px-3 py-1 rounded-[8px] text-[12.5px] text-text-secondary bg-bg-subtle hover:bg-bg-inset transition-colors"
+          @click="toggleAllGroups"
+        >
+          {{ allExpanded ? '全部收起' : '全部展开' }}
+        </button>
+      </div>
+
       <div class="overflow-x-auto">
         <table class="w-full min-w-[640px] text-[13.5px]">
           <thead>
@@ -378,33 +393,56 @@ function goPage(it: number | '...') {
           </thead>
           <tbody>
             <!-- 无斑马纹，行 hover 才现底色（06 规范 4.11 克制感） -->
-            <tr
-              v-for="r in records"
-              :key="r.record_id"
-              class="border-b border-border last:border-b-0 hover:bg-bg-subtle transition-colors"
-            >
-              <td class="px-5 py-3 text-text-secondary whitespace-nowrap" :title="r.create_time">
-                {{ relTime(r.create_time) }}
-              </td>
-              <td class="px-5 py-3 text-text-primary whitespace-nowrap">{{ r.pen_name }}</td>
-              <td class="px-5 py-3 whitespace-nowrap">
-                <span
-                  class="px-1.5 py-0.5 rounded-[6px] text-[11.5px] font-medium whitespace-nowrap"
-                  :style="{ backgroundColor: tagOf(r.record_type).bg, color: tagOf(r.record_type).color }"
-                >
-                  {{ tagOf(r.record_type).label }}
-                </span>
-              </td>
-              <td class="px-5 py-3 text-text-secondary min-w-[240px]">{{ r.summary }}</td>
-              <td
-                v-for="col in extColumns"
-                :key="col.field"
-                class="px-5 py-3 text-right whitespace-nowrap"
-                :style="{ fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }"
+            <template v-for="g in groups" :key="g.pen_name">
+              <!-- 圈舍分组头行：点击展开/收起 -->
+              <tr
+                class="bg-bg-subtle/60 border-b border-border cursor-pointer select-none hover:bg-bg-subtle transition-colors"
+                :aria-expanded="!!expanded[g.pen_name]"
+                @click="toggleGroup(g.pen_name)"
               >
-                {{ extShown(r, col.field) }}
-              </td>
-            </tr>
+                <td :colspan="4 + extColumns.length" class="px-5 py-2.5">
+                  <div class="flex items-center gap-2">
+                    <ChevronDown
+                      :size="15"
+                      :stroke-width="1.5"
+                      :class="cn('text-text-tertiary transition-transform', expanded[g.pen_name] && 'rotate-180')"
+                    />
+                    <span class="text-[13.5px] font-medium text-text-primary">{{ g.pen_name }}</span>
+                    <span class="text-[12.5px] text-text-tertiary tnum">{{ g.items.length }} 条</span>
+                    <span class="text-[12px] text-text-tertiary">{{ g.typeSummary }}</span>
+                  </div>
+                </td>
+              </tr>
+              <template v-if="expanded[g.pen_name]">
+                <tr
+                  v-for="r in g.items"
+                  :key="r.record_id"
+                  class="border-b border-border last:border-b-0 hover:bg-bg-subtle transition-colors"
+                >
+                  <td class="pl-10 pr-5 py-3 text-text-secondary whitespace-nowrap" :title="r.create_time">
+                    {{ relTime(r.create_time) }}
+                  </td>
+                  <td class="px-5 py-3 text-text-primary whitespace-nowrap">{{ r.pen_name }}</td>
+                  <td class="px-5 py-3 whitespace-nowrap">
+                    <span
+                      class="px-1.5 py-0.5 rounded-[6px] text-[11.5px] font-medium whitespace-nowrap"
+                      :style="{ backgroundColor: tagOf(r.record_type).bg, color: tagOf(r.record_type).color }"
+                    >
+                      {{ tagOf(r.record_type).label }}
+                    </span>
+                  </td>
+                  <td class="px-5 py-3 text-text-secondary min-w-[240px]">{{ r.summary }}</td>
+                  <td
+                    v-for="col in extColumns"
+                    :key="col.field"
+                    class="px-5 py-3 text-right whitespace-nowrap"
+                    :style="{ fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }"
+                  >
+                    {{ extShown(r, col.field) }}
+                  </td>
+                </tr>
+              </template>
+            </template>
           </tbody>
         </table>
 
@@ -418,58 +456,8 @@ function goPage(it: number | '...') {
         </div>
       </div>
 
-      <!-- 分页器（03 节：右对齐，上一页/下一页 + 页码；每页条数可选 20/50/100） -->
-      <div v-if="records.length > 0" class="flex items-center justify-end gap-4 px-5 py-3 border-t border-border flex-wrap">
-        <span class="text-[12.5px] text-text-tertiary">共 {{ total.toLocaleString() }} 条</span>
-        <div class="flex items-center gap-1.5">
-          <button
-            v-for="n in [20, 50, 100]"
-            :key="n"
-            :class="
-              cn(
-                'px-2 py-1 rounded-[6px] text-[12px] transition-colors',
-                pageSize === n ? 'bg-primary-100 text-primary-700 font-medium' : 'text-text-tertiary hover:bg-bg-subtle',
-              )
-            "
-            @click="changePageSize(n)"
-          >
-            {{ n }} 条/页
-          </button>
-        </div>
-        <div class="flex items-center gap-1">
-          <button
-            :disabled="page <= 1"
-            :class="cn(PAGER_BTN, 'px-2 text-text-secondary bg-bg-subtle hover:bg-bg-inset disabled:opacity-40 disabled:cursor-not-allowed')"
-            aria-label="上一页"
-            @click="setPage(page - 1)"
-          >
-            上一页
-          </button>
-          <template v-for="(it, idx) in pagerItems" :key="typeof it === 'number' ? it : 'e' + idx">
-            <span v-if="it === '...'" class="px-1 text-text-tertiary text-[12.5px]">…</span>
-            <button
-              v-else
-              :class="
-                cn(
-                  PAGER_BTN,
-                  it === page ? 'bg-primary text-white font-medium' : 'text-text-secondary hover:bg-bg-subtle',
-                )
-              "
-              :aria-current="it === page ? 'page' : undefined"
-              @click="goPage(it)"
-            >
-              {{ it }}
-            </button>
-          </template>
-          <button
-            :disabled="page >= totalPages"
-            :class="cn(PAGER_BTN, 'px-2 text-text-secondary bg-bg-subtle hover:bg-bg-inset disabled:opacity-40 disabled:cursor-not-allowed')"
-            aria-label="下一页"
-            @click="setPage(page + 1)"
-          >
-            下一页
-          </button>
-        </div>
+      <div v-if="overCap" class="flex items-center px-5 py-3 border-t border-border text-[12.5px] text-text-tertiary">
+        当前筛选下超过 500 条仅显示前 500 条——请用上方筛选缩小范围，或用「导出 Excel」拿全量
       </div>
     </div>
 

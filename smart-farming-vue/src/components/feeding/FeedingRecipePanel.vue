@@ -138,7 +138,7 @@ function openFormula() {
   activating.value = false;
   formulaErr.value = null;
   formulaOpen.value = true;
-  // React 版 FormulaDialog 挂载时自建 ['feed-prices'] observer（默认 staleTime=0）会重新取价
+  // 打开配方弹窗时强制重新取价（['feed-prices'] 默认 staleTime=0）
   void pricesQuery.refetch();
 }
 
@@ -205,7 +205,7 @@ function openPrice() {
   editValue.value = '';
   saving.value = false;
   priceOpen.value = true;
-  // React 版 PriceDialog 挂载时自建 ['feed-prices'] observer 会重新取价
+  // 打开改价弹窗时强制重新取价
   void pricesQuery.refetch();
 }
 
@@ -214,12 +214,12 @@ function startEdit(p: FeedPriceItem) {
   editValue.value = String(p.unit_price);
 }
 
-// 数字输入框按 React 版保留字符串状态（v-model 会因 type=number 自动转成 number）
+// 数字输入框保留字符串状态（v-model 会因 type=number 自动转成 number）
 function onEditValueInput(e: Event) {
   editValue.value = (e.target as HTMLInputElement).value;
 }
 
-// 对应 React 的 autoFocus：行内改价输入框挂载后聚焦
+// 行内改价输入框挂载后自动聚焦
 const vFocus = {
   mounted(el: HTMLInputElement) {
     el.focus();

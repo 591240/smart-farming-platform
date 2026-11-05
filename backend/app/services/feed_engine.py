@@ -179,13 +179,32 @@ async def _sow_phase_of(db: AsyncSession, pen_id: int) -> str:
 
 
 async def match_nutrition_standard(db: AsyncSession, pen: Pen) -> dict[str, Any] | None:
-    """五级优先匹配（空圈舍品种 → None → 上层报 42201 无模板）。"""
+    """五级优先匹配（品种无模板且同物种参考品种也无 → None → 上层报 42201）。
+
+    2026-11-05 品种扩容回落：/variety/list 新增品种（杜泊羊/西门塔尔牛等）暂无
+    专项营养标准，此处按同物种参考品种（羊→湖羊、牛→肉牛、猪→育肥猪）回落，
+    并在 std 上带 variety_fallback_note 供 compose 拼进 basis，向用户说明依据。
+    """
     rows = (
         await db.execute(select(FeedNutritionLib).where(FeedNutritionLib.variety_code == (pen.variety_code or "")))
     ).scalars().all()
+    fallback_note = ""
+    if not rows:
+        v = pen.variety_code or ""
+        species = next((p for p in ("sheep", "cattle", "pig") if v.startswith(p)), None)
+        ref = {"sheep": "sheep_hu", "cattle": "cattle_beef", "pig": "pig_fattening"}.get(species)
+        if ref:
+            rows = (
+                await db.execute(select(FeedNutritionLib).where(FeedNutritionLib.variety_code == ref))
+            ).scalars().all()
+            if rows:
+                fallback_note = "该品种暂无专项营养标准，已按同物种参考品种档位计算，仅供近似参考"
     if not rows:
         return None
     pool = [_row_dict(r) for r in rows]
+    if fallback_note:
+        for s in pool:
+            s["variety_fallback_note"] = fallback_note
     sex_type = "female" if (pen.male_count == 0 and pen.female_count > 0) else "all"
 
     if pen.variety_code == "pig_sow":
@@ -259,13 +278,16 @@ def compose(
             raise ValueError(f"原料「{name}」暂无价格数据，无法核算成本")
         cost += kg * to_float(price["unit_price"])
         ingredients.append({"name": name, "ratio_pct": to_float(it["ratio_pct"]), "daily_kg_per_head": kg})
+    basis = std["source"] if not basis_note else f"{std['source']}；{basis_note}"
+    if std.get("variety_fallback_note"):
+        basis = f"{basis}；{std['variety_fallback_note']}" if basis else std["variety_fallback_note"]
     return {
         "label": label,
         "ingredients": ingredients,
         "feeds_per_day": int(std["nutrition"].get("feeds_per_day", 2)),
         "cost_per_head_day": round2(cost),
         "nutrition_check": nutrition_check(formula_items, std["nutrition"].get("indicators") or []),
-        "basis": std["source"] if not basis_note else f"{std['source']}；{basis_note}",
+        "basis": basis,
         "disclaimer": FORMULA_DISCLAIMER,
     }
 

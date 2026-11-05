@@ -4,7 +4,7 @@
 // - TC-F09b：连续 3 天实际偏离计划 >20% → 校准提示（前端计算，F06 决策 3）
 import { computed, ref, watch } from 'vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
-import { AlertTriangle, ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, Cog, Scale } from 'lucide-vue-next';
+import { AlertTriangle, ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, Scale } from 'lucide-vue-next';
 import { cn, todayLocal } from '@/lib/utils';
 import { ApiError } from '@/lib/api-contract';
 import type { UserPen } from '@/api/auth-api';
@@ -14,7 +14,6 @@ import {
   apiFeedingOverview,
   apiGetFeedPlan,
   apiListFeedingRecords,
-  apiSeedFeedingDemo,
 } from '@/api/feed-api';
 import FeedingDialog from './FeedingDialog.vue';
 
@@ -142,19 +141,6 @@ async function checkInAll() {
   }
 }
 
-// 演示数据载入（用户主动触发）：走真后端 `POST /feeding/seed-demo`，计划量由引擎现算，
-// 每条记录都带 remark 标注演示来源，幂等保护在服务端
-async function loadDemo() {
-  try {
-    const res = await apiSeedFeedingDemo();
-    emit('toast', 'ok', res.message);
-    invalidateFeeding();
-  } catch (e) {
-    emit('toast', 'err', errText(e, '演示数据载入失败'));
-  }
-}
-
-const hasAnyRecord = computed(() => items.value.some((i) => i.registered));
 const isToday = computed(() => date.value === todayStr());
 const unregisteredNames = computed(() =>
   items.value
@@ -191,7 +177,7 @@ const recordLoading = ref(false);
 const recordErr = ref<string | null>(null);
 const planSourceLabel = ref('');
 
-// 数字输入框按 React 版保留字符串状态（v-model 会因 type=number 自动转成 number）
+// 数字输入框保留字符串状态（v-model 会因 type=number 自动转成 number）
 function onAmountInput(e: Event) {
   amount.value = (e.target as HTMLInputElement).value;
 }
@@ -282,14 +268,6 @@ function runConfirmAction() {
         </button>
       </div>
       <div class="flex items-center gap-3">
-        <button
-          v-if="!hasAnyRecord && pens.length > 0"
-          @click="loadDemo"
-          class="flex items-center gap-2 px-4 py-2 rounded-[10px] border border-border bg-card text-text-secondary text-[13.5px] hover:border-primary hover:text-primary transition-colors"
-        >
-          <Cog :size="15" :stroke-width="1.5" />
-          载入演示数据
-        </button>
         <button
           @click="checkInAll"
           :disabled="clocking || pendingCount === 0"

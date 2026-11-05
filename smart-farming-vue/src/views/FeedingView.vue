@@ -75,7 +75,7 @@ function onSelectPen(e: Event) {
 }
 
 // ===== Tab4 成本结算（FR-10/11 ④）=====
-// React 版 CostTab 仅在 Tab4 挂载；用 enabled 还原「切到 Tab4 才取数」的时机。
+// 用 enabled 控制「切到 Tab4 才取数」的时机。
 const costPen = computed(() => (activeTab.value === 3 ? selectedPen.value : null));
 
 const { data: costPlanData } = useQuery({

@@ -163,7 +163,7 @@ async def list_records(
     start_date: str = Query(default="", alias="from"),
     end_date: str = Query(default="", alias="to"),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=100),
+    page_size: int = Query(default=20, ge=1, le=500),
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:

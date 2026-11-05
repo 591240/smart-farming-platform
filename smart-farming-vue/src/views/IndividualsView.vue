@@ -17,6 +17,7 @@ import {
   Tag,
   Trash2,
   Wand2,
+  ChevronDown,
 } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import {
@@ -47,7 +48,6 @@ const STATUS_TABS: { value: IndividualStatus | 'all'; label: string }[] = [
 const penFilter = ref<number>(0); // 0 = 全部圈舍
 const status = ref<IndividualStatus | 'all'>('active');
 const keyword = ref('');
-const page = ref(1);
 
 // 档案列表（含对账 summary / 逐圈差额）
 const data = ref<IndividualListResult | null>(null);
@@ -79,8 +79,8 @@ async function load() {
       pen_id: penFilter.value || undefined,
       status: status.value,
       keyword: keyword.value.trim() || undefined,
-      page: page.value,
-      page_size: 20,
+      page: 1,
+      page_size: 500, // 按圈舍分组展示必须整拉（后端上限 500）；超过时表格下方给出缩小范围提示
     });
     data.value = r;
     if (!penFilter.value) allPens.value = r.pens;
@@ -93,7 +93,7 @@ async function load() {
 }
 
 watch(
-  [penFilter, status, keyword, page],
+  [penFilter, status, keyword],
   () => {
     void load();
   },
@@ -116,22 +116,52 @@ async function handleAutoFill(penId: number, penName: string) {
 const summary = computed(() => data.value?.summary ?? { stock_total: 0, active_total: 0, diff: 0 });
 const diffPens = computed(() => allPens.value.filter((p) => p.diff > 0));
 const total = computed(() => data.value?.total ?? 0);
-const currentPage = computed(() => data.value?.page ?? 1);
-const pageCount = computed(() => (data.value ? Math.ceil(data.value.total / data.value.page_size) : 1));
+const overCap = computed(() => total.value > 500);
+
+// ===== 按圈舍折叠分组（默认收起，点圈舍行展开明细）=====
+interface PenGroup {
+  pen_id: number;
+  pen_name: string;
+  items: IndividualItem[];
+  male: number;
+  female: number;
+}
+const groups = computed<PenGroup[]>(() => {
+  const map = new Map<number, PenGroup>();
+  for (const it of data.value?.items ?? []) {
+    let g = map.get(it.pen_id);
+    if (!g) {
+      g = { pen_id: it.pen_id, pen_name: it.pen_name, items: [], male: 0, female: 0 };
+      map.set(it.pen_id, g);
+    }
+    g.items.push(it);
+    if (it.gender === 'male') g.male += 1;
+    else g.female += 1;
+  }
+  return [...map.values()];
+});
+const expanded = ref<Record<number, boolean>>({});
+function toggleGroup(penId: number) {
+  expanded.value[penId] = !expanded.value[penId];
+}
+const allExpanded = computed(() => groups.value.length > 0 && groups.value.every((g) => expanded.value[g.pen_id]));
+function toggleAllGroups() {
+  const next = !allExpanded.value;
+  const patch: Record<number, boolean> = {};
+  for (const g of groups.value) patch[g.pen_id] = next;
+  expanded.value = patch;
+}
 
 function handlePenChange(e: Event) {
   penFilter.value = Number((e.target as HTMLSelectElement).value);
-  page.value = 1;
 }
 
 function handleKeywordInput(e: Event) {
   keyword.value = (e.target as HTMLInputElement).value;
-  page.value = 1;
 }
 
 function selectStatus(s: IndividualStatus | 'all') {
   status.value = s;
-  page.value = 1;
 }
 
 function handleDeleteEnter(e: MouseEvent) {
@@ -282,8 +312,20 @@ async function handleDeleteConfirm() {
       </div>
     </div>
 
-    <!-- 档案表 -->
+    <!-- 档案表（按圈舍折叠分组，默认收起） -->
     <div class="bg-card rounded-[12px] card-highlight overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-2.5 border-b border-border">
+        <span class="text-[12.5px] text-text-tertiary">
+          共 {{ total }} 只 · {{ groups.length }} 个圈舍 · 点击圈舍行展开明细
+        </span>
+        <button
+          v-if="groups.length > 0"
+          class="px-3 py-1 rounded-[8px] text-[12.5px] text-text-secondary bg-bg-subtle hover:bg-bg-inset transition-colors"
+          @click="toggleAllGroups"
+        >
+          {{ allExpanded ? '全部收起' : '全部展开' }}
+        </button>
+      </div>
       <table class="w-full text-[13.5px]">
         <thead>
           <tr class="text-left text-[12.5px] text-text-tertiary border-b border-border">
@@ -310,79 +352,89 @@ async function handleDeleteConfirm() {
             </td>
           </tr>
           <template v-else>
-            <tr
-              v-for="it in data.items"
-              :key="it.individual_id"
-              class="border-b border-border last:border-0 hover:bg-bg-subtle/50 transition-colors cursor-pointer"
-              @click="detailItem = it"
-            >
-              <td class="px-5 py-3 font-medium text-text-primary tnum">{{ it.ear_tag_no }}</td>
-              <td class="px-3 py-3 text-text-secondary">{{ it.gender_label }}</td>
-              <td class="px-3 py-3 text-text-secondary">{{ it.pen_name }}</td>
-              <td class="px-3 py-3 text-text-secondary">{{ it.variety_name ?? '—' }}</td>
-              <td class="px-3 py-3 text-text-secondary tnum">{{ it.birth_date ?? '—' }}</td>
-              <td class="px-3 py-3 text-text-secondary">{{ it.source }}</td>
-              <td class="px-3 py-3">
-                <StatusBadge :status="it.status" :label="it.status_label" />
-                <p
-                  v-if="it.status !== 'active' && it.exit_note"
-                  class="text-[11.5px] text-text-tertiary mt-0.5 max-w-[220px] truncate"
-                  :title="it.exit_note"
+            <template v-for="g in groups" :key="g.pen_id">
+              <!-- 圈舍分组头行：点击展开/收起 -->
+              <tr
+                class="bg-bg-subtle/60 border-b border-border cursor-pointer select-none hover:bg-bg-subtle transition-colors"
+                :aria-expanded="!!expanded[g.pen_id]"
+                @click="toggleGroup(g.pen_id)"
+              >
+                <td colspan="9" class="px-5 py-2.5">
+                  <div class="flex items-center gap-2">
+                    <ChevronDown
+                      :size="15"
+                      :stroke-width="1.5"
+                      :class="cn('text-text-tertiary transition-transform', expanded[g.pen_id] && 'rotate-180')"
+                    />
+                    <span class="text-[13.5px] font-medium text-text-primary">{{ g.pen_name }}</span>
+                    <span class="text-[12.5px] text-text-tertiary tnum">{{ g.items.length }} 只</span>
+                    <span class="text-[12px] text-text-tertiary">母 {{ g.female }} · 公 {{ g.male }}</span>
+                  </div>
+                </td>
+              </tr>
+              <!-- 明细行（展开才渲染） -->
+              <template v-if="expanded[g.pen_id]">
+                <tr
+                  v-for="it in g.items"
+                  :key="it.individual_id"
+                  class="border-b border-border last:border-0 hover:bg-bg-subtle/50 transition-colors cursor-pointer"
+                  @click="detailItem = it"
                 >
-                  {{ it.exit_note }}
-                </p>
-              </td>
-              <td class="px-3 py-3 text-text-tertiary tnum">{{ it.create_time.slice(0, 10) }}</td>
-              <td class="px-5 py-3 text-right whitespace-nowrap">
-                <button
-                  class="p-1.5 rounded-[6px] text-text-tertiary hover:bg-bg-subtle hover:text-text-secondary transition-colors"
-                  :aria-label="`查看档案 ${it.ear_tag_no}`"
-                  title="查看档案"
-                  @click.stop="detailItem = it"
-                >
-                  <StickyNote :size="14" :stroke-width="1.5" />
-                </button>
-                <button
-                  class="p-1.5 rounded-[6px] text-text-tertiary hover:bg-bg-subtle hover:text-text-secondary transition-colors"
-                  :aria-label="`编辑 ${it.ear_tag_no}`"
-                  @click.stop="editItem = it"
-                >
-                  <Pencil :size="14" :stroke-width="1.5" />
-                </button>
-                <button
-                  v-if="it.status === 'active'"
-                  class="p-1.5 rounded-[6px] text-text-tertiary hover:bg-bg-subtle transition-colors ml-1"
-                  :aria-label="`删除 ${it.ear_tag_no}`"
-                  @click.stop="deleteItem = it"
-                  @mouseenter="handleDeleteEnter"
-                  @mouseleave="handleDeleteLeave"
-                >
-                  <Trash2 :size="14" :stroke-width="1.5" />
-                </button>
-              </td>
-            </tr>
+                  <td class="px-5 py-3 pl-10 font-medium text-text-primary tnum">{{ it.ear_tag_no }}</td>
+                  <td class="px-3 py-3 text-text-secondary">{{ it.gender_label }}</td>
+                  <td class="px-3 py-3 text-text-secondary">{{ it.pen_name }}</td>
+                  <td class="px-3 py-3 text-text-secondary">{{ it.variety_name ?? '—' }}</td>
+                  <td class="px-3 py-3 text-text-secondary tnum">{{ it.birth_date ?? '—' }}</td>
+                  <td class="px-3 py-3 text-text-secondary">{{ it.source }}</td>
+                  <td class="px-3 py-3">
+                    <StatusBadge :status="it.status" :label="it.status_label" />
+                    <p
+                      v-if="it.status !== 'active' && it.exit_note"
+                      class="text-[11.5px] text-text-tertiary mt-0.5 max-w-[220px] truncate"
+                      :title="it.exit_note"
+                    >
+                      {{ it.exit_note }}
+                    </p>
+                  </td>
+                  <td class="px-3 py-3 text-text-tertiary tnum">{{ it.create_time.slice(0, 10) }}</td>
+                  <td class="px-5 py-3 text-right whitespace-nowrap">
+                    <button
+                      class="p-1.5 rounded-[6px] text-text-tertiary hover:bg-bg-subtle hover:text-text-secondary transition-colors"
+                      :aria-label="`查看档案 ${it.ear_tag_no}`"
+                      title="查看档案"
+                      @click.stop="detailItem = it"
+                    >
+                      <StickyNote :size="14" :stroke-width="1.5" />
+                    </button>
+                    <button
+                      class="p-1.5 rounded-[6px] text-text-tertiary hover:bg-bg-subtle hover:text-text-secondary transition-colors"
+                      :aria-label="`编辑 ${it.ear_tag_no}`"
+                      @click.stop="editItem = it"
+                    >
+                      <Pencil :size="14" :stroke-width="1.5" />
+                    </button>
+                    <button
+                      v-if="it.status === 'active'"
+                      class="p-1.5 rounded-[6px] text-text-tertiary hover:bg-bg-subtle transition-colors ml-1"
+                      :aria-label="`删除 ${it.ear_tag_no}`"
+                      @click.stop="deleteItem = it"
+                      @mouseenter="handleDeleteEnter"
+                      @mouseleave="handleDeleteLeave"
+                    >
+                      <Trash2 :size="14" :stroke-width="1.5" />
+                    </button>
+                  </td>
+                </tr>
+              </template>
+            </template>
           </template>
         </tbody>
       </table>
       <div
-        v-if="data && data.total > data.page_size"
-        class="flex items-center justify-end gap-3 px-5 py-3 border-t border-border text-[13px] text-text-secondary"
+        v-if="overCap"
+        class="flex items-center px-5 py-3 border-t border-border text-[12.5px] text-text-tertiary"
       >
-        <span class="tnum">共 {{ total }} 条 · 第 {{ currentPage }} / {{ pageCount }} 页</span>
-        <button
-          :disabled="currentPage <= 1"
-          class="px-3 py-1 rounded-[8px] bg-bg-subtle hover:bg-bg-inset transition-colors disabled:opacity-40"
-          @click="page = Math.max(1, page - 1)"
-        >
-          上一页
-        </button>
-        <button
-          :disabled="currentPage >= pageCount"
-          class="px-3 py-1 rounded-[8px] bg-bg-subtle hover:bg-bg-inset transition-colors disabled:opacity-40"
-          @click="page = Math.min(pageCount, page + 1)"
-        >
-          下一页
-        </button>
+        当前筛选下超过 500 条仅显示前 500 条——请用上方圈舍/状态筛选缩小范围
       </div>
     </div>
 

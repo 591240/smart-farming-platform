@@ -147,7 +147,7 @@ function focusAlert() {
   }, 2400);
 }
 
-// 等价 React useEffect([focusId, alertList.length])：列表长度变化后（DOM 已更新）再定位
+// 列表长度变化后（DOM 已更新）再按 focusId 定位
 watch(
   () => [focusId.value, alertList.value.length] as const,
   () => {

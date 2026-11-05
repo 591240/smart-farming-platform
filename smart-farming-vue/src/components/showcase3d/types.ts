@@ -1,5 +1,8 @@
 export type Species = 'pig' | 'cattle' | 'sheep';
 
+/** 3D 场景天气模式：与 F08 气象模块联动（text_day 关键词映射） */
+export type WeatherMode = 'sunny' | 'cloudy' | 'rain';
+
 /** 告警定位锚点类型：环境/设备/监控/栏位 */
 export type HotspotKey = 'env' | 'device' | 'cam' | 'pen';
 

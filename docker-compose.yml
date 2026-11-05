@@ -44,8 +44,8 @@ services:
     image: emqx/emqx:5.8
     container_name: sf-emqx
     ports:
-      - "127.0.0.1:1883:1883"    # MQTT
-      - "127.0.0.1:18083:18083"  # Dashboard (默认 admin/public)
+      - "1883:1883"              # MQTT（公网开放；认证=内置数据库，匿名已禁用，ACL 见 EMQX file 源）
+      - "127.0.0.1:18083:18083"  # Dashboard（仅本机，默认 admin/public）
     volumes:
       - emqx_data:/opt/emqx/data
     healthcheck:

@@ -244,7 +244,7 @@ onMounted(() => {
   }
 });
 
-// archiveTip 自动消失（React useEffect 的定时器清理照搬）
+// archiveTip 自动消失（卸载时必须清理定时器）
 watch(archiveTip, (tip, _old, onCleanup) => {
   if (!tip) return;
   const t = window.setTimeout(() => (archiveTip.value = null), 2600);
@@ -289,8 +289,8 @@ async function send(text: string, opts?: { retry?: boolean; image?: string | nul
     return;
   }
   if (streamingRef.value && opts?.retry) return;
-  // id 必须在 setMessages 之外自增：写进 updater 里等于把副作用塞给 React 渲染阶段，
-  // React 18 批处理下 updater 可能延后甚至重复执行，assistantId 就会指到别的气泡上
+  // id 必须在 setMessages 之外自增：写进 updater 里等于把副作用塞给渲染阶段，
+  // updater 可能延后甚至重复执行，assistantId 就会指到别的气泡上
   //（2026-10-15 现象：AI 回复被打进用户气泡，占位气泡永远空白）
   const t = nowTime();
   const assistantId = idRef.value + (opts?.retry ? 0 : 1);

@@ -41,3 +41,4 @@ docs/product/
 # 此前只写了 backend/uploads/，规则从未命中，210 个附件差点进了首次提交。
 backend/app/uploads/
 backend/uploads/
+smart-farming-vue/dist.old/

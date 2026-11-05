@@ -256,8 +256,3 @@ export function apiGetDailyGain(penId: number) {
 export function apiGetFeedConversion(penId: number) {
   return apiFetch<FeedConversionData>('GET', `/pen/${penId}/feed-conversion`);
 }
-
-/** 演示数据载入（真后端版）：计划量由引擎现算，幂等不覆盖，且不注入出栏记录。 */
-export function apiSeedFeedingDemo() {
-  return apiFetch<{ seeded: boolean; pen_id: number; pen_name: string; message: string }>('POST', '/feeding/seed-demo');
-}

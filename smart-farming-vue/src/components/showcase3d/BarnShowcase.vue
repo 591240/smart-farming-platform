@@ -7,7 +7,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { PhotoSceneConfig } from '@/api/scene-api';
-import type { BarnFocus, BarnInstance, HotspotKey, Species } from './types';
+import type { BarnFocus, BarnInstance, HotspotKey, Species, WeatherMode } from './types';
 
 const props = defineProps<{
   /** 用户圈舍列表（每项=一栋：名称+物种；未建圈舍时 undefined → 默认单栋生猪） */
@@ -15,6 +15,10 @@ const props = defineProps<{
   focus?: BarnFocus | null;
   /** F15 拍照建场景：按识别配置生成定制栏舍；null = 模板场景 */
   photoConfig?: PhotoSceneConfig | null;
+  /** F08 气象联动：晴/多云/雨（null=数据未就绪，按晴天渲染） */
+  weather?: WeatherMode | null;
+  /** 环控联动：温度超阈值（≥30℃）的圈舍名列表 → 对应栏舍红温脉冲 */
+  hotPens?: string[] | null;
 }>();
 
 const ALL_SPECIES: Species[] = ['pig', 'cattle', 'sheep'];
@@ -118,6 +122,16 @@ const legend = computed(() => LEGEND[displaySpecies.value]);
 const mountEl = ref<HTMLDivElement | null>(null);
 const picked = ref<{ name: string; sub: string; x: number; y: number } | null>(null);
 const autoRotate = ref(true);
+const layoutMode = ref(false); // 布置模式：拖动房舍调整场区布局
+
+function enterLayout(): void {
+  layoutMode.value = !layoutMode.value;
+  toggleLayoutMode(layoutMode.value);
+}
+
+function resetLayout(): void {
+  resetBarnLayout();
+}
 
 /* ---------- 命令式场景句柄（非响应式：只在 mount 内赋值，watcher 读取） ---------- */
 let orbitControls: OrbitControls | null = null;
@@ -129,13 +143,20 @@ let instAnim: { fans: THREE.Object3D[]; scrapers: THREE.Mesh[] } = { fans: [], s
 let roofMat: THREE.MeshStandardMaterial | null = null;
 let instMeta: { off: number; species: Species; name: string; row: number }[] = [];
 let pensAnchor: [number, number][] = [];
-let barnsBox: { z: number; half: number; row: number; species: Species }[] = [];
+let barnsBox: { x: number; z: number; half: number; row: number; species: Species }[] = [];
 let roofGhost: (on: boolean) => void = () => {};
 let ghostOn = false; // 虚化持久状态：布局重建后自动恢复
 let applyLayout: (list: BarnInstance[]) => void = () => {};
 let hideAll: () => void = () => {};
 let disposeScene: (() => void) | null = null;
 let pickedTimer = 0;
+// 拖动布置：每排长舍当前摆放位（layoutPens 重建时恢复，拖动/告警定位共用）
+let rowPos: { x: number; z: number }[] = [];
+let rowKeys: string[] = []; // 每排的持久化键（圈名集合）
+let toggleLayoutMode: (on: boolean) => void = () => {};
+let resetBarnLayout: () => void = () => {};
+// 红温联动：每排长舍的可发热材质（墙体/屋面，局部材质不串舍）+ 是否高温
+let instHeat: { mats: THREE.MeshStandardMaterial[]; hot: boolean }[] = [];
 const goal = {
   pos: new THREE.Vector3(7, 10.5, 20),
   tgt: new THREE.Vector3(0, 2, 0),
@@ -174,14 +195,15 @@ function syncFocus(): void {
     const idx = focus.penName ? list.findIndex((b) => b.name === focus.penName) : -1;
     const anchors = pensAnchor;
     const an = idx >= 0 && anchors.length === list.length ? anchors[idx] : (anchors[0] ?? [0, 0]);
-    const rowZ = -Math.floor(Math.max(0, idx) / PER_BARN) * ROW_GAP;
+    const row = Math.floor(Math.max(0, idx) / PER_BARN);
+    const rp = rowPos[row] ?? { x: 0, z: -row * ROW_GAP }; // 拖动后的房舍实际位置
     const sp = (idx >= 0 ? list[idx]?.species : focus.species) ?? 'pig';
     let mx: number, my: number, mz: number;
-    if (focus.hotspot === 'pen') { mx = an[0]; my = 1.0; mz = an[1]; }
+    if (focus.hotspot === 'pen') { mx = an[0] + rp.x; my = 1.0; mz = an[1] + rp.z; }
     else if (focus.hotspot === 'cam') { mx = 7.5; my = 3.8; mz = 9.2; }
     else {
       const [hx, hy, hz] = HOTSPOTS[sp]?.[focus.hotspot] ?? HOTSPOTS.pig[focus.hotspot];
-      mx = an[0] + hx * 0.7; my = hy; mz = hz + rowZ;
+      mx = an[0] + rp.x + hx * 0.7; my = hy; mz = hz + rp.z;
     }
     marker.position.set(mx, my, mz);
     marker.visible = true;
@@ -240,8 +262,7 @@ onMounted(() => {
 
   /* ---------- 场景基础 ---------- */
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xdfe7ee);
-  scene.fog = new THREE.Fog(0xdfe7ee, 70, 160);
+  // 天色/雾在「天气系统」段统一设置（随晴/多云/雨渐变）
 
   const camera = new THREE.PerspectiveCamera(42, mount.clientWidth / mount.clientHeight, 0.1, 300);
   camera.position.set(7, 10.5, 20);
@@ -263,17 +284,61 @@ onMounted(() => {
   controls.autoRotateSpeed = 0.7;
   orbitControls = controls;
 
-  /* ---------- 灯光 ---------- */
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa48f, 0.85));
-  const key = new THREE.DirectionalLight(0xfff4e0, 1.7);
-  key.position.set(20, 30, 16);
-  key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
-  Object.assign(key.shadow.camera, { left: -32, right: 32, top: 26, bottom: -26, far: 90 });
-  scene.add(key);
+  /* ---------- 灯光（强度随天气模式平滑过渡） ---------- */
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x9aa48f, 0.85);
+  scene.add(hemiLight);
+  const keyLight = new THREE.DirectionalLight(0xfff4e0, 1.7);
+  keyLight.position.set(20, 30, 16);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(2048, 2048);
+  Object.assign(keyLight.shadow.camera, { left: -32, right: 32, top: 26, bottom: -26, far: 90 });
+  scene.add(keyLight);
   const fill = new THREE.DirectionalLight(0xbfd4ff, 0.35);
   fill.position.set(-18, 10, -14);
   scene.add(fill);
+
+  /* ---------- 天气系统（F08 气象联动）：晴/多云/雨 → 天色+雾+光照渐变，雨天粒子 ---------- */
+  const WEATHER_STYLE: Record<WeatherMode, { sky: number; fogNear: number; keyInt: number; hemiInt: number }> = {
+    sunny:  { sky: 0xdfe7ee, fogNear: 70, keyInt: 1.7, hemiInt: 0.85 },
+    cloudy: { sky: 0xb4bdc6, fogNear: 55, keyInt: 1.0, hemiInt: 0.68 },
+    rain:   { sky: 0x8f99a3, fogNear: 42, keyInt: 0.72, hemiInt: 0.58 },
+  };
+  const skyColor = new THREE.Color(0xdfe7ee);          // 当前天色（逐帧向目标渐变）
+  const tmpSky = new THREE.Color();                    // 渐变目标色暂存
+  scene.background = skyColor;
+  const fog = new THREE.Fog(0xdfe7ee, 70, 160);
+  scene.fog = fog;
+  let weatherTarget = WEATHER_STYLE.sunny;
+
+  // 雨滴粒子：LineSegments（每滴上下两端，带风斜），落到底回弹顶部循环
+  const RAIN_COUNT = 620;
+  const RAIN_AREA = { x: 52, z: 38, top: 30 };
+  const rainPos = new Float32Array(RAIN_COUNT * 6);
+  const resetDrop = (i: number, init = false): void => {
+    const k = i * 6;
+    const x = (Math.random() - 0.5) * 2 * RAIN_AREA.x;
+    const z = (Math.random() - 0.5) * 2 * RAIN_AREA.z;
+    const y = init ? Math.random() * RAIN_AREA.top : RAIN_AREA.top + Math.random() * 4;
+    const len = 0.85 + Math.random() * 0.5;
+    rainPos[k] = x; rainPos[k + 1] = y; rainPos[k + 2] = z;
+    rainPos[k + 3] = x - 0.12; rainPos[k + 4] = y - len; rainPos[k + 5] = z;
+  };
+  for (let i = 0; i < RAIN_COUNT; i++) resetDrop(i, true);
+  const rainGeo = new THREE.BufferGeometry();
+  rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+  const rain = new THREE.LineSegments(
+    rainGeo,
+    new THREE.LineBasicMaterial({ color: 0xa9c6dc, transparent: true, opacity: 0.5 }),
+  );
+  rain.visible = false;
+  rain.frustumCulled = false;
+  scene.add(rain);
+
+  const applyWeather = (m: WeatherMode | null | undefined): void => {
+    weatherTarget = WEATHER_STYLE[m ?? 'sunny'];
+    rain.visible = m === 'rain';
+  };
+  applyWeather(props.weather);
 
   /* ---------- 地面 ---------- */
   const ground = new THREE.Mesh(
@@ -702,58 +767,100 @@ onMounted(() => {
   /* ==========================================================
      场区配套（真实养殖场标配：生物安全 + 粪污处理 + 物联网感知）
      ========================================================== */
+  // 拖动布置持久化：按圈名/设施名存偏移量，刷新/数据重取后自动恢复
+  const LS_LAYOUT = 'sf3d-barn-layout-v1';
+  type LayoutMap = Record<string, { dx: number; dz: number }>;
+  const loadLayout = (): LayoutMap => {
+    try { return JSON.parse(localStorage.getItem(LS_LAYOUT) || '{}') as LayoutMap; }
+    catch { return {}; }
+  };
+  let savedLayout = loadLayout();
   const site = new THREE.Group();
   scene.add(site);
-  // 场区硬化道路（净道）+ 与舍前连接
+  // 场区硬化道路（净道）+ 与舍前连接（道路属地面基础设施，不参与拖动）
   box(site, 64, 0.05, 3, 0, 0.03, 10.6, roadM);
   box(site, 2.6, 0.05, 2.2, 0, 0.03, 8.9, roadM);
+  // 布置模式可拖动的场区设施：每设施一个壳组，子网格保持绝对坐标，拖动=整体平移壳组
+  const siteFacilities: { g: THREE.Group; name: string; zones: string[] }[] = [];
+  const fac = (name: string, zones: string[]): THREE.Group => {
+    const g = new THREE.Group();
+    site.add(g);
+    siteFacilities.push({ g, name, zones });
+    return g;
+  };
+  const facGate = fac('大门消毒区', ['大门车辆消毒池', '车辆洗消棚']);
+  const facWeather = fac('气象监测杆', ['气象监测杆']);
+  const facCam = fac('视频监控杆', ['视频监控杆']);
+  const facManure = fac('粪污处理区', ['储粪罐', '固液分离棚']);
+  const facTower = fac('水塔', ['水塔']);
+  const facSilo = fac('青贮窖', ['青贮窖']);
+  const facHay = fac('干草棚', ['干草棚']);
   // 大门 + 车辆消毒池（规程：长≥4m 深≥0.2m）+ 车辆洗消棚
-  for (const gx of [4.4, 7.6]) box(site, 0.3, 2.4, 0.3, gx, 1.2, 10.6, darkM);
-  box(site, 3.5, 0.18, 0.2, 6, 2.5, 10.6, darkM);                    // 门头横梁
-  box(site, 4.2, 0.18, 2, 6, 0.12, 10.6, mat(0x51707e, 0.05, 0.6));  // 消毒池
-  box(site, 3.2, 0.06, 1.8, 6, 0.24, 10.6, waterIn);                 // 消毒液面
-  for (const px2 of [4.7, 7.3]) box(site, 0.16, 3.4, 0.16, px2, 1.7, 12.4, metalM); // 洗消棚柱
-  box(site, 3.2, 0.14, 2.2, 6, 3.5, 12.4, roofM);                    // 洗消棚顶
+  for (const gx of [4.4, 7.6]) box(facGate, 0.3, 2.4, 0.3, gx, 1.2, 10.6, darkM);
+  box(facGate, 3.5, 0.18, 0.2, 6, 2.5, 10.6, darkM);                    // 门头横梁
+  box(facGate, 4.2, 0.18, 2, 6, 0.12, 10.6, mat(0x51707e, 0.05, 0.6));  // 消毒池
+  box(facGate, 3.2, 0.06, 1.8, 6, 0.24, 10.6, waterIn);                 // 消毒液面
+  for (const px2 of [4.7, 7.3]) box(facGate, 0.16, 3.4, 0.16, px2, 1.7, 12.4, metalM); // 洗消棚柱
+  box(facGate, 3.2, 0.14, 2.2, 6, 3.5, 12.4, roofM);                    // 洗消棚顶
   // 气象监测杆（风速杯 + 风向标 + 太阳能板 + 采集箱）
-  cyl(site, 0.06, 5.5, -7, 2.75, 10.2, metalM);
-  cyl(site, 0.02, 0.9, -7, 5.7, 10.2, metalM, [0, 0, Math.PI / 2]);  // 风速臂
+  cyl(facWeather, 0.06, 5.5, -7, 2.75, 10.2, metalM);
+  cyl(facWeather, 0.02, 0.9, -7, 5.7, 10.2, metalM, [0, 0, Math.PI / 2]);  // 风速臂
   for (const cy of [-0.3, 0.3]) {
     const cup = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), fanM);
-    cup.position.set(-7 + cy, 5.75, 10.2); site.add(cup);
+    cup.position.set(-7 + cy, 5.75, 10.2); facWeather.add(cup);
   }
-  box(site, 0.5, 0.12, 0.06, -7.3, 5.15, 10.2, feedY).rotation.z = -0.35; // 风向标尾板
-  box(site, 0.9, 0.05, 0.6, -7.35, 4.6, 10.2, mat(0x2f4a63, 0.4, 0.3)).rotation.z = 0.4; // 太阳能板
-  box(site, 0.35, 0.5, 0.25, -7, 4.0, 10.2, darkM);                  // 数据采集箱
+  box(facWeather, 0.5, 0.12, 0.06, -7.3, 5.15, 10.2, feedY).rotation.z = -0.35; // 风向标尾板
+  box(facWeather, 0.9, 0.05, 0.6, -7.35, 4.6, 10.2, mat(0x2f4a63, 0.4, 0.3)).rotation.z = 0.4; // 太阳能板
+  box(facWeather, 0.35, 0.5, 0.25, -7, 4.0, 10.2, darkM);                  // 数据采集箱
   // 视频监控杆（球场杆 + 云台相机）
-  cyl(site, 0.05, 4.2, 7.5, 2.1, 9.2, metalM);
-  cyl(site, 0.03, 0.7, 7.15, 4.1, 9.2, metalM, [0, 0, Math.PI / 2]);
-  box(site, 0.22, 0.16, 0.34, 6.85, 4.05, 9.2, fanM);                // 相机
+  cyl(facCam, 0.05, 4.2, 7.5, 2.1, 9.2, metalM);
+  cyl(facCam, 0.03, 0.7, 7.15, 4.1, 9.2, metalM, [0, 0, Math.PI / 2]);
+  box(facCam, 0.22, 0.16, 0.34, 6.85, 4.05, 9.2, fanM);                // 相机
   // 粪污处理区（场区西侧）：储粪罐（防渗密闭）+ 固液分离棚 —— 移出舍间带，避免与多排舍体穿模
-  cyl(site, 1.5, 3.0, -15, 1.5, -7, tankM);
-  cone(site, 1.6, 0.8, -15, 3.4, -7, tankM);
-  cyl(site, 0.1, 2.2, -13.8, 0.9, -6.4, pipeM, [0.5, 0, 0.4]);        // 输送管
-  box(site, 3.0, 2.2, 0.15, -10.5, 1.1, -8.3, wallM);                 // 分离棚后墙
-  box(site, 0.15, 2.2, 2.6, -12.0, 1.1, -7.0, wallM);                 // 侧墙
-  box(site, 0.15, 2.2, 2.6, -9.0, 1.1, -7.0, wallM);
-  box(site, 3.4, 0.12, 3.0, -10.5, 2.28, -7.0, roofM);
-  box(site, 1.2, 1.0, 0.8, -10.5, 0.5, -7.0, fanM);                   // 固液分离机
+  cyl(facManure, 1.5, 3.0, -15, 1.5, -7, tankM);
+  cone(facManure, 1.6, 0.8, -15, 3.4, -7, tankM);
+  cyl(facManure, 0.1, 2.2, -13.8, 0.9, -6.4, pipeM, [0.5, 0, 0.4]);        // 输送管
+  box(facManure, 3.0, 2.2, 0.15, -10.5, 1.1, -8.3, wallM);                 // 分离棚后墙
+  box(facManure, 0.15, 2.2, 2.6, -12.0, 1.1, -7.0, wallM);                 // 侧墙
+  box(facManure, 0.15, 2.2, 2.6, -9.0, 1.1, -7.0, wallM);
+  box(facManure, 3.4, 0.12, 3.0, -10.5, 2.28, -7.0, roofM);
+  box(facManure, 1.2, 1.0, 0.8, -10.5, 0.5, -7.0, fanM);                   // 固液分离机
   // 供水：水塔（支架 + 罐体，场区东侧）
   for (const [lx, lz] of [[0.5, 0.5], [-0.5, 0.5], [0.5, -0.5], [-0.5, -0.5]])
-    cyl(site, 0.07, 2.6, 15.5 + lx, 1.3, -7 + lz, metalM);
-  cyl(site, 1.0, 1.8, 15.5, 3.5, -7, siloM);
-  cone(site, 1.05, 0.5, 15.5, 4.65, -7, siloM);
+    cyl(facTower, 0.07, 2.6, 15.5 + lx, 1.3, -7 + lz, metalM);
+  cyl(facTower, 1.0, 1.8, 15.5, 3.5, -7, siloM);
+  cone(facTower, 1.05, 0.5, 15.5, 4.65, -7, siloM);
   // 青贮窖（槽式，三面墙一面开，场区东侧）
-  box(site, 0.2, 2.4, 4.6, 10.3, 1.2, -6.2, concM);
-  box(site, 0.2, 2.4, 4.6, 13.7, 1.2, -6.2, concM);
-  box(site, 3.6, 2.4, 0.2, 12, 1.2, -8.4, concM);
-  box(site, 3.2, 1.6, 4.2, 12, 0.8, -6.2, feedG);                     // 青贮料堆
+  box(facSilo, 0.2, 2.4, 4.6, 10.3, 1.2, -6.2, concM);
+  box(facSilo, 0.2, 2.4, 4.6, 13.7, 1.2, -6.2, concM);
+  box(facSilo, 3.6, 2.4, 0.2, 12, 1.2, -8.4, concM);
+  box(facSilo, 3.2, 1.6, 4.2, 12, 0.8, -6.2, feedG);                     // 青贮料堆
   // 干草棚（三面墙一面开 + 草捆堆放，场区西北角）
-  box(site, 0.2, 3.2, 5.0, -20.4, 1.6, -6.4, wallM);
-  box(site, 0.2, 3.2, 5.0, -16.6, 1.6, -6.4, wallM);
-  box(site, 4.0, 3.2, 0.2, -18.5, 1.6, -8.8, wallM);
-  box(site, 4.4, 0.14, 5.6, -18.5, 3.3, -6.4, roofM);
+  box(facHay, 0.2, 3.2, 5.0, -20.4, 1.6, -6.4, wallM);
+  box(facHay, 0.2, 3.2, 5.0, -16.6, 1.6, -6.4, wallM);
+  box(facHay, 4.0, 3.2, 0.2, -18.5, 1.6, -8.8, wallM);
+  box(facHay, 4.4, 0.14, 5.6, -18.5, 3.3, -6.4, roofM);
   for (const [bx2, by2, bz2] of [[-19.4, 0.55, -6.2], [-18.2, 0.55, -6.6], [-17.6, 0.55, -5.9], [-18.8, 1.45, -6.3]] as [number, number, number][]) {
-    box(site, 1.1, 1.0, 0.8, bx2, by2, bz2, hayM);
+    box(facHay, 1.1, 1.0, 0.8, bx2, by2, bz2, hayM);
+  }
+  // 设施拖动后点击识别感应区同步位移：记录各感应区出厂位，拖动/复位时按设施名平移
+  const siteZonesHome = SITE_ZONES.map((z) => ({ n: z.n, p: [...z.p] as [number, number, number] }));
+  const shiftZones = (zones: string[], dx: number, dz: number): void => {
+    for (const z of SITE_ZONES) {
+      if (!zones.includes(z.n)) continue;
+      const home = siteZonesHome.find((h) => h.n === z.n);
+      if (!home) continue;
+      z.p[0] = home.p[0] + dx;
+      z.p[2] = home.p[2] + dz;
+    }
+  };
+  // 恢复用户上次拖动的设施摆放
+  for (const f of siteFacilities) {
+    const saved = savedLayout[`site:${f.name}`];
+    if (saved) {
+      f.g.position.set(saved.dx, 0, saved.dz);
+      shiftZones(f.zones, saved.dx, saved.dz);
+    }
   }
 
   /* ---------- 栏舍标签（Sprite 文字牌） ---------- */
@@ -965,6 +1072,8 @@ onMounted(() => {
     const g = new THREE.Group();
     const wM = mat(0xf4f1e8, 0, 0.85);
     const rM = mat(0x8f9aa3, 0.15, 0.55);
+    wM.userData.heatable = true;   // 红温联动：圈舍高温时墙体/屋面泛红脉冲（本舍局部材质）
+    rM.userData.heatable = true;
     const isSheep = sp === 'sheep';
     const isCattle = sp === 'cattle';
     const floorY = isSheep ? 1.37 : 0;   // 羊舍为高床
@@ -1134,6 +1243,17 @@ onMounted(() => {
     return g;
   };
 
+  // 收集该舍的可发热材质（墙体/屋面），红温脉冲只影响本舍
+  const collectHeatMats = (g: THREE.Group): THREE.MeshStandardMaterial[] => {
+    const set = new Set<THREE.Material>();
+    g.traverse((o) => {
+      const m = o as THREE.Mesh;
+      const mm = m.material as THREE.MeshStandardMaterial | undefined;
+      if (m.isMesh && mm && mm.userData?.heatable) set.add(mm);
+    });
+    return [...set] as THREE.MeshStandardMaterial[];
+  };
+
   const layoutPens = (list: BarnInstance[]): void => {
     clearInstances();
     hideTemplates();
@@ -1143,15 +1263,23 @@ onMounted(() => {
     const rows: BarnInstance[][] = [];
     for (let i = 0; i < items.length; i += PER_BARN) rows.push(items.slice(i, i + PER_BARN));
     const anchors: [number, number][] = [];
+    const hotNames = props.hotPens ?? [];
     let len = 0;
     rows.forEach((row, r) => {
       const before = anchors.length;
       const g = buildPenBarn(sp, row, r, anchors);
+      // 恢复用户拖动摆放的偏移（默认位：x=0，z=-r*ROW_GAP）
+      const key = row.map((s) => s.name || `row${r}`).sort().join('|');
+      const saved = savedLayout[key];
+      rowPos[r] = { x: saved?.dx ?? 0, z: -r * ROW_GAP + (saved?.dz ?? 0) };
+      rowKeys[r] = key;
+      g.position.set(rowPos[r].x, 0, rowPos[r].z);
       scene.add(g);
       instanceGroups.push(g);
+      instHeat[r] = { mats: collectHeatMats(g), hot: row.some((s) => hotNames.includes(s.name)) };
       for (let i2 = before; i2 < anchors.length; i2++) len = Math.max(len, Math.abs(anchors[i2][0]));
     });
-    barnsBox = rows.map((row, r) => ({ z: -r * ROW_GAP, half: len + 0.6, row: r, species: sp }));
+    barnsBox = rows.map((row, r) => ({ x: rowPos[r].x, z: rowPos[r].z, half: len + 0.6, row: r, species: sp }));
     instMeta = items.map((it, i2) => ({
       off: anchors[i2]?.[0] ?? 0, species: it.species, name: it.name, row: Math.floor(i2 / PER_BARN),
     }));
@@ -1164,6 +1292,114 @@ onMounted(() => {
   };
   applyLayout = (list) => layoutPens(list);
   hideAll = () => { hideTemplates(); clearInstances(); };
+
+  /* ---------- 拖动布置模式：圈舍长舍 + 场区设施均可按住拖到新位置，偏移落 localStorage ---------- */
+  const dragRay = new THREE.Raycaster();
+  const dragNdc = new THREE.Vector2();
+  const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  const hitPoint = new THREE.Vector3();
+  let dragging: {
+    g: THREE.Group;
+    kind: 'row' | 'site';
+    row?: number;
+    fac?: { g: THREE.Group; name: string; zones: string[] };
+    dx: number; dz: number;
+  } | null = null;
+  const DRAG_LIMIT = { x: 62, zMin: -46, zMax: 36 }; // 场区地面范围内拖动
+  const dragTargets = (): THREE.Object3D[] => [
+    ...instanceGroups,
+    ...siteFacilities.map((f) => f.g),
+  ];
+  const barnRootOf = (o: THREE.Object3D | null): { kind: 'row' | 'site'; g: THREE.Group; row?: number; fac?: typeof siteFacilities[number] } | null => {
+    while (o) {
+      const rowIdx = instanceGroups.indexOf(o as THREE.Group);
+      if (rowIdx >= 0) return { kind: 'row', g: instanceGroups[rowIdx], row: rowIdx };
+      const f = siteFacilities.find((sf) => sf.g === o);
+      if (f) return { kind: 'site', g: f.g, fac: f };
+      o = o.parent;
+    }
+    return null;
+  };
+  toggleLayoutMode = (on: boolean): void => {
+    controls.enableRotate = !on;
+    controls.enablePan = !on;
+    if (on) {
+      controls.autoRotate = false;
+      autoRotate.value = false;
+    }
+    renderer.domElement.style.cursor = on ? 'grab' : '';
+    if (!on) dragging = null;
+  };
+  resetBarnLayout = (): void => {
+    try { localStorage.removeItem(LS_LAYOUT); } catch { /* 存储不可用时忽略 */ }
+    savedLayout = {};
+    for (const f of siteFacilities) {
+      f.g.position.set(0, 0, 0);
+      shiftZones(f.zones, 0, 0);
+    }
+    if (photoMode.value) syncPhoto();
+    else applyLayout(props.barns ?? []);
+  };
+  const onDragDown = (e: PointerEvent): void => {
+    if (!layoutMode.value || e.button !== 0) return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    dragNdc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    dragNdc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    dragRay.setFromCamera(dragNdc, camera);
+    const hits = dragRay.intersectObjects(dragTargets(), true);
+    if (hits.length === 0) return;
+    const root = barnRootOf(hits[0].object);
+    if (!root) return;
+    dragging = {
+      g: root.g, kind: root.kind, row: root.row, fac: root.fac,
+      dx: hits[0].point.x - root.g.position.x, dz: hits[0].point.z - root.g.position.z,
+    };
+    renderer.domElement.style.cursor = 'grabbing';
+    e.preventDefault();
+  };
+  const onDragMove = (e: PointerEvent): void => {
+    if (!dragging) return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    dragNdc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    dragNdc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    dragRay.setFromCamera(dragNdc, camera);
+    if (!dragRay.ray.intersectPlane(groundPlane, hitPoint)) return;
+    const dg = dragging;
+    const nx = Math.max(-DRAG_LIMIT.x, Math.min(DRAG_LIMIT.x, hitPoint.x - dg.dx));
+    const nz = Math.max(DRAG_LIMIT.zMin, Math.min(DRAG_LIMIT.zMax, hitPoint.z - dg.dz));
+    if (dg.kind === 'row') {
+      dg.g.position.set(nx, 0, nz);
+      rowPos[dg.row!] = { x: nx, z: nz };
+      const bb = barnsBox.find((b) => b.row === dg.row);
+      if (bb) { bb.x = nx; bb.z = nz; }
+    } else if (dg.fac) {
+      dg.g.position.set(nx, 0, nz);
+      shiftZones(dg.fac.zones, nx, nz); // 点击识别感应区跟随
+    }
+  };
+  const onDragUp = (): void => {
+    if (!dragging) return;
+    const dg = dragging;
+    if (dg.kind === 'row') {
+      const rp = rowPos[dg.row!];
+      const key = rowKeys[dg.row!];
+      if (rp && key) {
+        savedLayout[key] = { dx: rp.x, dz: rp.z - (-dg.row! * ROW_GAP) };
+        try { localStorage.setItem(LS_LAYOUT, JSON.stringify(savedLayout)); } catch { /* 存储不可用时忽略 */ }
+      }
+    } else if (dg.fac) {
+      savedLayout[`site:${dg.fac.name}`] = { dx: dg.g.position.x, dz: dg.g.position.z };
+      try { localStorage.setItem(LS_LAYOUT, JSON.stringify(savedLayout)); } catch { /* 存储不可用时忽略 */ }
+    }
+    dragging = null;
+    renderer.domElement.style.cursor = layoutMode.value ? 'grab' : '';
+    syncFocus(); // 告警定位标记跟随新位置
+  };
+  renderer.domElement.addEventListener('pointerdown', onDragDown);
+  renderer.domElement.addEventListener('pointermove', onDragMove);
+  renderer.domElement.addEventListener('pointerup', onDragUp);
+  renderer.domElement.addEventListener('pointerleave', onDragUp);
+
   // 屋顶虚化开关（场景内注册）：模板/场区棚顶共用材质 + 各长舍局部屋顶按 isRoof 标记
   roofGhost = (on: boolean) => {
     const apply = (m: THREE.Material | undefined) => {
@@ -1206,7 +1442,8 @@ onMounted(() => {
   let raf = 0;
   const animate = () => {
     raf = requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
+    const dt = Math.min(clock.getDelta(), 0.1);
+    const t = clock.elapsedTime;
     pigScraperA.position.x = 4.5 * Math.sin(t * 0.5);   // 清粪刮板往复
     pigScraperB.position.x = 4.5 * Math.sin(t * 0.5 + Math.PI);
     cowScraper.position.x = 4.5 * Math.sin(t * 0.4);
@@ -1224,6 +1461,37 @@ onMounted(() => {
     for (const cf2 of customAnim.fans) cf2.rotation.z += 0.22;
     const mk = focusMarker;
     if (mk && mk.visible) mk.scale.setScalar(1 + 0.16 * Math.sin(t * 5)); // 脉冲
+    // 天气渐变：天色/雾/光照向当前天气模式平滑过渡；雨天粒子下落循环
+    skyColor.lerp(
+      tmpSky.setHex(weatherTarget.sky),
+      Math.min(1, dt * 3),
+    );
+    fog.color.copy(skyColor);
+    fog.near += (weatherTarget.fogNear - fog.near) * Math.min(1, dt * 3);
+    keyLight.intensity += (weatherTarget.keyInt - keyLight.intensity) * Math.min(1, dt * 3);
+    hemiLight.intensity += (weatherTarget.hemiInt - hemiLight.intensity) * Math.min(1, dt * 3);
+    if (rain.visible) {
+      const fall = 26 * dt;
+      const drift = 2.2 * dt;
+      for (let i = 0; i < RAIN_COUNT; i++) {
+        const k = i * 6;
+        rainPos[k] += drift; rainPos[k + 3] += drift;
+        rainPos[k + 1] -= fall; rainPos[k + 4] -= fall;
+        if (rainPos[k + 4] < 0) resetDrop(i);
+      }
+      (rainGeo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+    }
+    // 红温联动：高温圈舍墙体/屋面泛红脉冲，复常后熄灭
+    for (const h of instHeat) {
+      for (const m of h.mats) {
+        if (h.hot) {
+          m.emissive.setHex(0xff3517);
+          m.emissiveIntensity = 0.3 + 0.18 * Math.sin(t * 3.2);
+        } else if (m.emissiveIntensity !== 0) {
+          m.emissiveIntensity = 0;
+        }
+      }
+    }
     if (goal.active) {                                   // 切舍/定位相机平滑过渡
       camera.position.lerp(goal.pos, 0.06);
       controls.target.lerp(goal.tgt, 0.06);
@@ -1243,6 +1511,7 @@ onMounted(() => {
   let downX = 0, downY = 0;
   const onPointerDown = (e: PointerEvent) => { downX = e.clientX; downY = e.clientY; };
   const onClickPick = (e: MouseEvent) => {
+    if (layoutMode.value) return; // 布置模式下点击=选中拖动，不弹设施卡片
     if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) return; // 拖拽视角不触发
     const rect = renderer.domElement.getBoundingClientRect();
     ndc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -1261,7 +1530,7 @@ onMounted(() => {
     for (const z of SITE_ZONES) consider(z.n, z.p[0], z.p[1], z.p[2], z.r);
     // 栏舍设施：先定位命中的长舍，再按舍内局部坐标匹配（多排 z 偏移已计入）
     for (const bb of barnsBox) {
-      if (Math.abs(p.z - bb.z) > 4.3 || Math.abs(p.x) > bb.half + 0.6) continue;
+      if (Math.abs(p.z - bb.z) > 4.3 || Math.abs(p.x - bb.x) > bb.half + 0.6) continue;
       inBarn = true;
       const sections = instMeta.filter((m) => m.row === bb.row);
       let nearest = sections[0];
@@ -1294,6 +1563,10 @@ onMounted(() => {
     window.removeEventListener('resize', onResize);
     renderer.domElement.removeEventListener('pointerdown', onPointerDown);
     renderer.domElement.removeEventListener('click', onClickPick);
+    renderer.domElement.removeEventListener('pointerdown', onDragDown);
+    renderer.domElement.removeEventListener('pointermove', onDragMove);
+    renderer.domElement.removeEventListener('pointerup', onDragUp);
+    renderer.domElement.removeEventListener('pointerleave', onDragUp);
     controls.dispose();
     if (orbitControls === controls) orbitControls = null;
     renderer.dispose();
@@ -1307,7 +1580,7 @@ onMounted(() => {
     renderer.domElement.remove();
   };
 
-  // 初始同步：先定位（若有），再拍照定制（若有）——与 React 里两个 effect 的挂载顺序一致
+  // 初始同步：先定位（若有），再拍照定制（若有），顺序不可颠倒
   syncFocus();
   syncPhoto();
 
@@ -1320,7 +1593,20 @@ onMounted(() => {
     () => syncFocus(),
   );
   watch(() => props.photoConfig, () => syncPhoto());
+  watch(() => props.weather, (m) => applyWeather(m));
+  watch(() => props.hotPens, (hot) => applyHotFlags(hot ?? []));
 });
+
+/** 按高温圈舍名单刷新各排热标记（不重建场景） */
+function applyHotFlags(names: string[]): void {
+  // instHeat 与排对应，但没有排→圈名映射；用 instMeta 圈名→行反查
+  for (const h of instHeat) h.hot = false;
+  for (const m of instMeta) {
+    if (!names.includes(m.name)) continue;
+    const h = instHeat[m.row];
+    if (h) h.hot = true;
+  }
+}
 
 // 点击提示卡 5 秒自动消失（再次点击即时刷新内容并重置计时）
 watch(picked, (v) => {
@@ -1359,6 +1645,24 @@ onBeforeUnmount(() => {
       >
         复位视角
       </button>
+      <button
+        type="button"
+        @click="enterLayout"
+        class="px-3.5 py-1.5 rounded-lg text-[13px] border transition-colors"
+        :class="layoutMode
+          ? 'bg-[#e03e36] text-white border-[#e03e36]'
+          : 'bg-white/90 text-text-primary border-border hover:bg-white'"
+      >
+        {{ layoutMode ? '完成布置' : '布置模式' }}
+      </button>
+      <button
+        v-if="layoutMode"
+        type="button"
+        @click="resetLayout"
+        class="px-3.5 py-1.5 rounded-lg text-[13px] border border-border bg-white/90 text-text-secondary hover:bg-white transition-colors"
+      >
+        恢复默认布局
+      </button>
     </div>
 
     <!-- 设备图例（跟随当前养殖物种） -->
@@ -1380,7 +1684,7 @@ onBeforeUnmount(() => {
 
     <!-- 操作提示 -->
     <div class="absolute right-4 bottom-4 z-10 text-[12px] text-text-tertiary">
-      左键拖拽旋转 · 滚轮缩放 · 右键平移
+      {{ layoutMode ? '布置模式：按住圈舍/场区设施拖到新位置 · 滚轮缩放 · 点「完成布置」保存' : '左键拖拽旋转 · 滚轮缩放 · 右键平移' }}
     </div>
   </div>
 </template>

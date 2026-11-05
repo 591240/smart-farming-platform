@@ -11,7 +11,7 @@
 消息约定（与 mock 的 AlertEvent 同形状，前端只需换传输层）：
     下行 {"event":"connected"|"alert"|"pong", "data":{...}}
     上行 纯文本 "ping" → 回 {"event":"pong"}（30s 心跳；空闲时靠它探活并穿越代理超时）
-前端收到 alert 只做 react-query 失效重取（不把帧内容当权威），与 mock 时代行为一致。
+前端收到 alert 只做查询缓存失效重取（不把帧内容当权威），与 mock 时代行为一致。
 """
 
 from __future__ import annotations

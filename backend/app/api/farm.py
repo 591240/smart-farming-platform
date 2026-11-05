@@ -43,7 +43,11 @@ BATCH_STAGES = {"nursing", "weaning", "growing", "fattening", "gestation", "lact
 VARIETY_NAMES = {
     "pig_fattening": "育肥猪", "pig_sow": "母猪", "pig_piglet": "仔猪",
     "cattle_beef": "肉牛", "cattle_dairy": "奶牛",
-    "sheep_hu": "湖羊", "sheep_small_tailed_han": "小尾寒羊", "common": "通用",
+    "cattle_simmental": "西门塔尔牛", "cattle_angus": "安格斯牛",
+    "cattle_charolais": "夏洛莱牛", "cattle_luxi_yellow": "鲁西黄牛", "cattle_qinchuan": "秦川牛",
+    "sheep_hu": "湖羊", "sheep_small_tailed_han": "小尾寒羊",
+    "sheep_dorper": "杜泊羊", "sheep_suffolk": "萨福克羊",
+    "sheep_tan": "滩羊", "sheep_wool": "绵羊（本地土种）", "sheep_boer": "波尔山羊", "common": "通用",
 }
 INDIVIDUAL_STATUS_LABEL = {"active": "在栏", "sold": "已出栏", "dead": "已死淘", "removed": "已调减"}
 

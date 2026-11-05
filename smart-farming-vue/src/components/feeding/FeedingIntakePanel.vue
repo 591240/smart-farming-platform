@@ -177,7 +177,7 @@ const remark = ref('');
 const weighLoading = ref(false);
 const weighErr = ref<string | null>(null);
 
-// 数字输入框按 React 版保留字符串状态（v-model 会因 type=number 自动转成 number）
+// 数字输入框保留字符串状态（v-model 会因 type=number 自动转成 number）
 function onAvgWeightInput(e: Event) {
   avgWeight.value = (e.target as HTMLInputElement).value;
 }

@@ -9,7 +9,7 @@
 
 import { computed, nextTick, ref, watch } from 'vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
-import { Cpu, Camera, Plus, Trash2, Activity, X, Syringe } from 'lucide-vue-next';
+import { Cpu, Camera, ChevronDown, Plus, Trash2, Activity, X, Syringe } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import { useUserFarms, useUserPens } from '@/composables/use-farm-data';
 import {
@@ -78,7 +78,18 @@ const toast = ref<string | null>(null);
 const injectTarget = ref<DeviceItem | null>(null);
 const previewTarget = ref<DeviceItem | null>(null);
 // C-24：设备上行密钥只在创建/轮换时以明文出现一次（库里只存 sha256），用状态横幅承接
-const keyReveal = ref<{ name: string; secret: string } | null>(null);
+const keyReveal = ref<{ name: string; secret: string; topic: string } | null>(null);
+const keyRevealExample = computed(() => {
+  const k = keyReveal.value;
+  if (!k) return '';
+  const sn = k.topic.split('/')[3] || '{设备编号}';
+  return JSON.stringify({
+    msg_id: 'demo-001',
+    device_id: sn,
+    topic: k.topic || '{topic}',
+    metrics: { temperature: 25.5, humidity: 60 },
+  });
+});
 
 const cancelDeleteBtn = ref<HTMLButtonElement | null>(null);
 
@@ -94,7 +105,7 @@ function reload() {
 async function rotateKey(d: DeviceItem) {
   try {
     const r = await apiRotateDeviceSecret(d.device_id);
-    keyReveal.value = { name: d.device_name, secret: r.device_secret };
+    keyReveal.value = { name: d.device_name, secret: r.device_secret, topic: d.mqtt_topic };
     showToast('设备密钥已重签发，旧密钥立即失效');
   } catch (e) {
     showToast(e instanceof ApiError ? e.message : '网络异常，请重试');
@@ -126,7 +137,7 @@ function isOnline(d: DeviceItem) {
   return d.online_status === 'online' && d.is_enable;
 }
 
-// ===== 添加设备弹窗（React 版为按需挂载组件；此处状态置于页面，打开时按原挂载初值重置）=====
+// ===== 添加设备弹窗（状态置于页面，打开时按初值重置）=====
 const addFarmId = ref<number | ''>('');
 const { pens: addPens } = useUserPens(
   computed(() => (addOpen.value && typeof addFarmId.value === 'number' ? addFarmId.value : null)),
@@ -138,6 +149,26 @@ const addSn = ref('');
 const addRtsp = ref('');
 const addErr = ref<string | null>(null);
 const addLoading = ref(false);
+const connGuideOpen = ref(false);
+
+// 真机接入说明（07 协议）：HTTP 直连公网可用；MQTT 需 EMQX 开放 1883 并为设备建认证
+const ingestUrl = `${window.location.origin}/api/device/ingest`;
+const topicPreview = computed(
+  () =>
+    `farm/${addFarmId.value || '{farm_id}'}/pen/${addPenId.value || '{pen_id}'}/${addSn.value.trim() || '{设备编号}'}/data`,
+);
+const ingestExample = computed(() =>
+  JSON.stringify(
+    {
+      msg_id: 'demo-001',
+      device_id: addSn.value.trim() || '{设备编号}',
+      topic: topicPreview.value,
+      metrics: { temperature: 25.5, humidity: 60, nh3: 10, co2: 800 },
+    },
+    null,
+    0,
+  ),
+);
 
 function openAddDialog() {
   addFarmId.value = farms.value[0]?.farm_id ?? '';
@@ -148,8 +179,14 @@ function openAddDialog() {
   addRtsp.value = '';
   addErr.value = null;
   addLoading.value = false;
+  connGuideOpen.value = true; // 传感器不需要填地址，接入方式对新手不直观——默认展开说明
   addOpen.value = true;
 }
+
+// 切到摄像头收起说明（它填 RTSP 地址即可），切回传感器自动展开
+watch(addType, (t) => {
+  connGuideOpen.value = t === 'sensor';
+});
 
 watch(
   [addPens, addPenId, addOpen],
@@ -193,7 +230,7 @@ async function submitAdd() {
       device_sn: addSn.value.trim(),
       ...(addType.value === 'camera' ? { rtsp_url: addRtsp.value.trim() } : {}),
     });
-    handleCreated(created.device_secret, addName.value.trim());
+    handleCreated(created.device_secret, addName.value.trim(), created.mqtt_topic);
   } catch (e) {
     addErr.value = e instanceof ApiError ? e.message : '网络异常，请重试';
   } finally {
@@ -201,11 +238,11 @@ async function submitAdd() {
   }
 }
 
-function handleCreated(secret?: string, dname?: string) {
+function handleCreated(secret?: string, dname?: string, topic?: string) {
   addOpen.value = false;
-  if (secret) keyReveal.value = { name: dname ?? '新设备', secret };
+  if (secret) keyReveal.value = { name: dname ?? '新设备', secret, topic: topic ?? '' };
   reload();
-  showToast('设备已注册，模拟上报已启动');
+  showToast('设备已注册，上行密钥只显示这一次，请立即保存');
 }
 
 // ===== F09 FR-04 视觉事件模拟注入（vision_sim 页面等价物：类型选择 + 置信度滑条 + 异常演练）=====
@@ -268,7 +305,7 @@ const injectLevelHint = computed(() =>
 );
 
 // ===== F09 FR-06 [预览] 模拟模式（06 规范 4.7：视频区占位 + 事件时间线 + 免责文案）=====
-// React 版弹窗按需挂载并自带 useQuery；此处置于页面，关闭弹窗时用 enabled 还原「仅打开时取数/轮询」。
+// 弹窗状态置于页面，关闭时用 enabled 还原「仅打开时取数/轮询」。
 const {
   data: previewData,
   isLoading: previewLoading,
@@ -323,10 +360,20 @@ watch(confirmDelete, (v) => {
           >
             {{ keyReveal.secret }}
           </code>
-          <p class="text-[12.5px] text-text-secondary mt-2 leading-[1.7]">
-            真实硬件上报：`POST /api/device/ingest` 带请求头 `X-Device-Key: {{ keyReveal.secret.slice(0, 8) }}…`，
-            无需农户登录；浏览器模拟器仍走登录态。丢了用行内「重签发密钥」，旧值立即失效（07 协议 3.3 / 03-API 7.4）。
-          </p>
+          <div class="text-[12.5px] text-text-secondary mt-2 leading-[1.7] space-y-1.5">
+            <p>
+              真实硬件上报（无需农户登录）：
+              <code class="px-1 rounded bg-card">POST {{ ingestUrl }}</code>，请求头
+              <code class="px-1 rounded bg-card break-all">X-Device-Key: {{ keyReveal.secret }}</code>
+            </p>
+            <p v-if="keyReveal.topic">
+              MQTT 通道主题 <code class="px-1 rounded bg-card tnum">{{ keyReveal.topic }}</code>（QoS 1，需 EMQX 开放 1883），payload 同下。
+            </p>
+            <code
+              class="block px-3 py-2 rounded-[8px] bg-card border border-border text-[11.5px] tnum text-text-primary break-all select-all"
+            >{{ keyRevealExample }}</code>
+            <p>密钥丢了用行内「重签发密钥」，旧值立即失效（07 协议 3.3 / 03-API 7.4）。</p>
+          </div>
         </div>
         <button
           @click="keyReveal = null"
@@ -481,9 +528,60 @@ watch(confirmDelete, (v) => {
             <X :size="18" class="text-text-tertiary" :stroke-width="1.5" />
           </button>
         </div>
-        <p class="text-[12.5px] text-text-tertiary mb-5">
-          模拟期设备标记为"模拟"来源；MQTT 主题由系统按圈舍与设备编号自动生成
+        <p class="text-[12.5px] text-text-tertiary mb-3">
+          MQTT 主题由系统按圈舍与设备编号自动生成；创建后返回一次性上行密钥，真实设备凭密钥上报
         </p>
+
+        <!-- 真机接入说明（07 协议） -->
+        <div class="mb-5 rounded-[10px] border border-border bg-bg-subtle px-4 py-3">
+          <button
+            type="button"
+            @click="connGuideOpen = !connGuideOpen"
+            class="w-full flex items-center justify-between gap-2 text-left"
+          >
+            <span class="text-[13px] font-medium text-text-primary">真机接入说明（传感器如何连上来）</span>
+            <ChevronDown
+              :size="15"
+              :stroke-width="1.5"
+              :class="cn('text-text-tertiary shrink-0 transition-transform', connGuideOpen && 'rotate-180')"
+            />
+          </button>
+          <div v-if="connGuideOpen" class="mt-3 space-y-2.5 text-[12.5px] leading-[1.8] text-text-secondary">
+            <p
+              class="px-3 py-2 rounded-[8px]"
+              style="background-color: rgba(46, 158, 107, 0.07); border: 1px solid rgba(46, 158, 107, 0.18)"
+            >
+              为什么传感器不用填网址？——摄像头是平台主动去连它拉视频流，所以要填地址；
+              温度传感器是反过来<b class="text-text-primary">它主动把读数推给平台</b>，
+              平台不用知道它在哪，它只需要下面这把密钥。
+            </p>
+            <div>
+              <p class="font-medium text-text-primary mb-1">① HTTP 直连（推荐，公网直接可用）</p>
+              <p>
+                硬件（ESP32 / STM32 / 网关）定时 <code class="px-1 rounded bg-card">POST {{ ingestUrl }}</code>，
+                请求头带 <code class="px-1 rounded bg-card">X-Device-Key: &lt;上行密钥&gt;</code>，无需农户登录。
+              </p>
+              <code
+                class="block mt-1.5 px-3 py-2 rounded-[8px] bg-card border border-border text-[11.5px] tnum text-text-primary break-all select-all"
+              >{{ ingestExample }}</code>
+            </div>
+            <div>
+              <p class="font-medium text-text-primary mb-1">② MQTT（EMQX，服务器 1883 端口）</p>
+              <p>
+                上报主题 <code class="px-1 rounded bg-card tnum">{{ topicPreview }}</code>（QoS 1），
+                payload 同①的 JSON。连接需 MQTT 账号密码（EMQX 内置数据库认证，匿名已禁用），账号找管理员开通。
+              </p>
+            </div>
+            <p>
+              指标白名单：<code class="px-1 rounded bg-card">temperature</code> 温度℃ ·
+              <code class="px-1 rounded bg-card">humidity</code> 湿度%RH ·
+              <code class="px-1 rounded bg-card">nh3</code> 氨气ppm ·
+              <code class="px-1 rounded bg-card">co2</code> 二氧化碳ppm（数值 ≥ 0；
+              <code class="px-1 rounded bg-card">msg_id</code> 保持唯一用于去重）。
+              密钥丢了用列表里的「重签发密钥」，旧值立即失效。
+            </p>
+          </div>
+        </div>
 
         <label for="dv-name" class="text-[13px] text-text-secondary mb-1.5 block">
           设备名称 <span style="color: var(--danger)">*</span>
