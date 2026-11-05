@@ -57,6 +57,14 @@ class Settings(BaseSettings):
     mqtt_username: str = ""
     mqtt_password: str = ""
     mqtt_topic: str = "farm/+/pen/+/+/data"
+    # ----- 告警微信推送（WxPusher，app/services/notify.py）-----
+    # appToken 为空 = 推送通道整体关闭（静默跳过，不影响告警主链路）。
+    # 订阅流程见 WxPusher 控制台：创建应用 → 拿 appToken → 创建主题（如"全部告警"/"仅高危"）→
+    # 养殖户扫码加入主题即可收微信通知，无需在平台内存任何用户标识。
+    wxpusher_token: str = ""
+    wxpusher_topic_all: int = 0   # 全部告警主题 ID（mid/high 都推）
+    wxpusher_topic_high: int = 0  # 仅高危主题 ID（high 单独推一份，0=不单推）
+    wxpusher_subscribe_url: str = ""  # 订阅二维码页面链接（设置页展示给农户扫码用）
 
     # ----- F02/F04/F14 业务后端（切真主链路，docker-compose sf-postgres）-----
     database_url: str = "postgresql+asyncpg://smartfarm:smartfarm123@127.0.0.1:5432/smart_farm"

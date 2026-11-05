@@ -20,7 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.rules import MERGE_WINDOW_MS
 from app.core import statestore
 from app.models import Alert, LedgerRecord, Pen
-from app.services import ws_hub
+from app.services import notify, ws_hub
 
 
 def now_ms() -> int:
@@ -70,4 +70,6 @@ async def create_alert(
             "create_time": alert.create_time.isoformat() if alert.create_time else None,
         },
     })
+    # 微信推送：中危及以上异步推 WxPusher（尽力而为，失败只记日志，不回滚不阻塞）
+    notify.schedule_alert_push(pen.pen_name, alert_type, risk_level, content)
     return alert

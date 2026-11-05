@@ -7,11 +7,23 @@
 // 2026-11-05 移除「演示环境」说明卡与 mock 历史文案（浏览器 mock 内核 2026-10-16 下线）。
 
 import { ref } from 'vue';
-import { Bell, Info, CloudSun } from 'lucide-vue-next';
+import { Bell, CloudSun, MessageSquare, Info } from 'lucide-vue-next';
 import { apiGetWeather } from '@/api/weather-api';
+import { apiWxNotifyStatus, type WxNotifyStatus } from '@/api/notify-api';
 import { isAlertPushEnabled, setAlertPushEnabled } from '@/lib/alert-stream';
 
 const alertPush = ref(isAlertPushEnabled());
+
+// ===== 微信告警通知（WxPusher）=====
+const wxNotify = ref<WxNotifyStatus | null>(null);
+apiWxNotifyStatus()
+  .then((r) => (wxNotify.value = r))
+  .catch(() => (wxNotify.value = { enabled: false, subscribe_url: '' }));
+
+function openSubscribe() {
+  const url = wxNotify.value?.subscribe_url;
+  if (url) window.open(url, '_blank');
+}
 
 function toggleAlertPush() {
   const next = !alertPush.value;
@@ -142,6 +154,31 @@ const switchThumbCls =
           {{ msg.text }}
         </span>
       </div>
+    </div>
+
+    <!-- 微信告警通知（WxPusher） -->
+    <div class="bg-card rounded-[12px] e1 px-6 py-5 mb-4">
+      <div class="flex items-start gap-3 mb-3">
+        <span class="w-9 h-9 rounded-[10px] bg-bg-subtle flex items-center justify-center text-text-secondary shrink-0">
+          <MessageSquare :size="16" :stroke-width="1.5" />
+        </span>
+        <div>
+          <div class="text-[14px] font-medium text-text-primary">微信告警通知</div>
+          <div class="text-[12px] text-text-tertiary mt-0.5">
+            <template v-if="wxNotify?.enabled">
+              已开启：中危及以上告警会自动推送到你微信，人不在电脑前也能第一时间收到。
+            </template>
+            <template v-else>未开启——管理员在服务端配置 WxPusher 应用凭据后，这里会出现订阅入口。</template>
+          </div>
+        </div>
+      </div>
+      <button
+        v-if="wxNotify?.enabled && wxNotify.subscribe_url"
+        class="px-4 py-2 rounded-[10px] text-[13.5px] font-medium bg-primary-50 text-primary-700 hover:bg-primary-100 transition-colors"
+        @click="openSubscribe"
+      >
+        扫码订阅微信通知
+      </button>
     </div>
 
     <!-- 版本信息 -->

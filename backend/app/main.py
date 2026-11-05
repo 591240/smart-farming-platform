@@ -31,6 +31,7 @@ from app.api.kb import router as kb_router, seed_kb_documents
 from app.api.feeding import router as feeding_router
 from app.api.farm import router as farm_router
 from app.api.individual import router as individual_router
+from app.api.notify import router as notify_router
 from app.api.records import router as records_router
 from app.api.rules import MEDICINE_LIB_SEED
 from app.api.scene import router as scene_router
@@ -282,6 +283,7 @@ app.include_router(vision_router)
 app.include_router(ws_router)
 app.include_router(admin_router)
 app.include_router(weather_router)
+app.include_router(notify_router)
 app.include_router(feeding_router)
 app.include_router(feed_router)
 app.include_router(feed_admin_router)  # /feed/price/sync：会改写全局参考价，仅管理员
