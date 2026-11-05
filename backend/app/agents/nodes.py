@@ -20,6 +20,7 @@
 
 from __future__ import annotations
 
+import logging
 import re
 import time
 from datetime import date, datetime, timezone
@@ -341,6 +342,18 @@ async def intent_recognize(state: ConsultState) -> dict[str, Any]:
 
 VISION_NOTE = "图片分析不能替代执业兽医现场诊断。"
 
+# 视觉识别失败可观测性（2026-11-05：qwen-vl 403 静默降级导致故障两周不可见的教训）：
+# 失败必须 ① 日志告警 ② 进程内计数 ③ 在最终回答里明确说"视觉分析暂不可用"，不留哑故障
+logger = logging.getLogger("app.agents.vision")
+vision_fail_stats = {"count": 0, "last_reason": "", "last_at": ""}
+
+
+def _record_vision_failure(reason: str) -> None:
+    vision_fail_stats["count"] += 1
+    vision_fail_stats["last_reason"] = reason[:200]
+    vision_fail_stats["last_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    logger.warning("vision_describe 失败（累计 %s 次）：%s", vision_fail_stats["count"], reason)
+
 
 async def vision_describe(state: ConsultState) -> dict[str, Any]:
     """把图片里的可见征象转成症状词并入检索文本。
@@ -356,9 +369,15 @@ async def vision_describe(state: ConsultState) -> dict[str, Any]:
         res = await describe_vision(
             image=image, species_code=state.get("main_species_code") or "pig", message=state["message"]
         )
-    except LLMError:
-        stream_section("vision", "图片识别", f"图片未能识别出明确体征，请以文字描述症状。\n{VISION_NOTE}", "多模态视觉模型")
-        return {}
+    except LLMError as e:
+        # 服务级失败（上游 4xx/5xx/超时/输出为空）≠ 图片没拍到东西，必须明示并计数
+        _record_vision_failure(str(e))
+        stream_section(
+            "vision", "图片识别",
+            f"视觉分析暂不可用（识别服务异常），本次未能结合图像信息。请以文字描述症状后重试。\n{VISION_NOTE}",
+            "多模态视觉模型",
+        )
+        return {"vision_failed": True}
 
     signs = [s for s in (res.get("signs") or []) if s]
     observation = str(res.get("observation") or "").strip()
@@ -586,10 +605,14 @@ async def load_context_retrieve(state: ConsultState) -> dict[str, Any]:
                     f"重新问诊，或直接描述{label}群的症状。"
                 )
             else:
-                out["kb_empty_text"] = (
+                base = (
                     f"知识库暂无该病症资料（当前圈舍：{pen_snapshot['pen_name']} · {label}），"
                     f"建议联系执业兽医现场诊断。"
                 )
+                # 视觉识别失败过：明示本轮没结合上图像信息，别让用户以为是图"看不出病"
+                if state.get("vision_failed"):
+                    base += "（注：本次图片视觉分析服务暂不可用，未能结合图像信息，建议稍后重试或补充文字描述。）"
+                out["kb_empty_text"] = base
         out["hit_keywords"] = []
     else:
         out["hit_keywords"] = hit_keywords_of(matched[0], eff_message)
