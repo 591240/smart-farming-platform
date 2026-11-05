@@ -21,11 +21,8 @@
 │   ├── smoke_*.py           # 6 组冒烟脚本（396 项断言）
 │   └── run.py               # 启动入口（Windows 必须用它，见下）
 ├── smart-farming-vue/       # Web 前端（Vue 3，唯一的业务前端）
-├── smart-farming-project/   # 旧版 React 前端（已停用，留作对照，勿再启动）
-├── ppt-frontend/            # 答辩 PPT 工程（与平台运行无关，可忽略）
 ├── deploy/                  # mediamtx 等部署配置
 ├── docs/                    # 01~26 设计与 PRD；08 = 遗留问题登记
-├── _archive/                # 已下线实现的存档（mock 内核 / Alembic / 临时脚本）
 ├── docker-compose.yml       # PostgreSQL / Redis / EMQX / Milvus / mediamtx
 └── .env.example             # 环境变量模板
 ```

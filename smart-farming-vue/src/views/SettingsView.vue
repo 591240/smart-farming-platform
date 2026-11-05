@@ -167,7 +167,7 @@ const codeCls = 'px-1 rounded bg-bg-subtle';
             <ClipboardCheck :size="16" :stroke-width="1.5" />
           </span>
           <div>
-            <div class="text-[14px] font-medium text-text-primary">演示环境（答辩走查用）</div>
+            <div class="text-[14px] font-medium text-text-primary">演示环境（演示走查用）</div>
             <div class="text-[12px] text-text-tertiary mt-0.5">
               HITL 演示账号与病例 · 3 天养殖故事演示租户（走查步骤见 README「验证」一节）
             </div>

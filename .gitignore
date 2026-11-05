@@ -27,7 +27,7 @@ output/
 generated-images/
 artifacts/
 
-# 答辩/面试准备材料与 PPT 生成工具残留（与产品文档无关，不入库）
+# PPT 生成工具残留（不入库）
 _presentation/
 ppt-frontend/
 docs/page-global-config.json
@@ -35,8 +35,6 @@ docs/pages.json
 docs/project.json
 docs/posters/
 docs/product/
-docs/20-面试拷问手册-*.md
-docs/22-答辩速记卡-*.md
 
 # 知识库上传文件（用户数据不入库 git，库里只存元数据）
 # 真实落盘路径是 backend/app/uploads/kb/（kb.py 的 UPLOAD_DIR = app/uploads/kb）。
