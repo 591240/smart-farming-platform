@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     llm_model: str = "qwen3.8-flash"
     # 图像问诊（FR-11）：病症图片可见体征识别走 DashScope 视觉模型，
     # 与主模型共用 base_url/api_key；可用 LLM_VISION_MODEL 环境变量覆盖。
-    llm_vision_model: str = "qwen-vl-max-latest"
+    llm_vision_model: str = "qwen3.8-flash"  # qwen3.8-flash 原生多模态，全栈统一一个模型（qwen-vl-* 老模型名对本账号 403）
     embedding_model: str = "qwen3.7-text-embedding"
     dashscope_api_key: str = ""
     # B5 向量检索（Milvus standalone，docker-compose sf-milvus，仅绑定回环地址）
