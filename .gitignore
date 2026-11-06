@@ -42,3 +42,9 @@ docs/product/
 backend/app/uploads/
 backend/uploads/
 smart-farming-vue/dist.old/
+
+# ==== GitHub 上线前补（2026-11-05 泄漏排查）====
+backend/uploads/
+_presentation/
+.idea/
+*.log

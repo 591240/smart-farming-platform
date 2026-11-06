@@ -28,7 +28,7 @@ log() { echo "[$(date '+%F %T')] $*"; }
 # -Fc（custom format）便于按需恢复单表；--no-owner 避免换机器后角色对不上
 docker exec "$DB_CONTAINER" pg_dump -U "$DB_USER" -d "$DB_NAME" -Fc --no-owner > "$FILE"
 
-if [ ! -s "$FILE" ] || [ "$(head -c 4 "$FILE")" != "PGDMP" ]; then
+if [ ! -s "$FILE" ] || [ "$(head -c 5 "$FILE")" != "PGDMP" ]; then
   log "[FAIL] 产物不是合法的 pg_dump custom format，已保留文件供排查：$FILE"
   exit 1
 fi
