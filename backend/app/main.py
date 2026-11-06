@@ -268,6 +268,15 @@ app.add_exception_handler(ApiError, api_error_handler)  # type: ignore[arg-type]
 app.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore[arg-type]
 app.add_exception_handler(Exception, unhandled_error_handler)
 
+# Prometheus 应用指标（2026-11-05 监控运维项目对接）：http_requests_total（请求量）、
+# http_request_duration_seconds（延迟分布）、状态码分布（错误率）。/metrics 只含端点
+# 计数与延迟分位数，无业务数据；经 nginx 精确匹配直通，供外部 Prometheus 抓取。
+from prometheus_fastapi_instrumentator import Instrumentator
+
+Instrumentator(excluded_handlers=["/metrics"]).instrument(app).expose(
+    app, include_in_schema=False
+)
+
 app.include_router(ai_router)
 app.include_router(auth_router)
 app.include_router(farm_router)

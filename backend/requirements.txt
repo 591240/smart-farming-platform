@@ -34,3 +34,6 @@ python-multipart>=0.0.9
 mcp>=1.9,<2
 # smoke_ws.py 的客户端依赖（运行时不需要，跑测试需要）
 websockets>=12
+
+# Prometheus 应用指标（监控运维项目对接，main.py Instrumentator）
+prometheus-fastapi-instrumentator>=7.0
